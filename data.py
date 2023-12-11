@@ -19,4 +19,25 @@ frequency_dict = {"Always":1, "Frequently":2, "Sometimes":3, "Rarely":4, "Not at
 mask = df["i12_health_1"]
 
 mask = mask.map(frequency_dict)
-print("i12_health_1: No. of N/A is", mask.isnull().sum(), "and the mean is", mask.mean())
+print("i12_health_1: No. of N/A is", mask.isnull().sum(), "and the mean is", round(mask.mean(),2))
+
+qweek = df["qweek"]
+
+# Create a box plot
+# plt.figure(figsize=(10, 6))
+# df.boxplot(column="i12_health_1", by="qweek", showfliers=False)
+# plt.title("Frequency vs Time in Australia")
+# plt.xlabel("Time")
+# plt.ylabel("Frequency")
+# plt.show()
+
+# Create a line plot connecting the averages
+average_mask_by_week = df.groupby(["qweek","i12_health_1"]).mean()
+print(average_mask_by_week)
+# plt.figure(figsize=(10, 6))
+# plt.plot(average_mask_by_week.index, average_mask_by_week.values, marker='o', linestyle='-', color='red')
+# plt.title("Average Frequency vs Time in Australia")
+# plt.xlabel("Time")
+# plt.ylabel("Average Frequency")
+# plt.show()
+
