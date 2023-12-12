@@ -100,7 +100,6 @@ num_cols = 2
 
 # Create subplots for each state
 fig, axes = plt.subplots(num_rows, num_cols, figsize=(15, 5 * num_rows), sharex=True)
-plt.xticks(rotation=45)
 
 for i, state in enumerate(unique_states):
     row = i // num_cols
@@ -114,11 +113,10 @@ for i, state in enumerate(unique_states):
 
     ax.set_title(f"Total Number of People for Each Frequency Level vs Time in {state}")
     ax.set_ylabel("Total Number of People")
-    
+    ax.tick_params(axis='x', rotation=45)
     ax.legend()
 
 # Set common X-axis label
-plt.xticks(rotation=45)
 plt.xlabel("Time")
 
 # Adjust layout
