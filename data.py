@@ -67,7 +67,7 @@ for row in csv_reader2:
         if count == 49:
             full_rec_vars.append(var_name)
             # print(f"The variable called {var_name:>16}, its amount of TRUE is {count}.")
-
+# print(full_rec_vars)
 # Double Check NULL value in these variables
 # for var in full_rec_vars:
 #     print(f"{var : >16} has total amount of missing value of {df[var].isnull().sum()}")
@@ -75,26 +75,105 @@ for row in csv_reader2:
 # **
 # Scatter plot to see how the data distribute
 # # **#
-plt.hist(list(mask.tolist()))
-plt.xticks([1, 2, 3, 4, 5], labels=[f"{label}: {value}" for label, value in frequency_dict.items()])
-plt.title("Frequency of wearing face mask in public for individuals in Australia")
-plt.xlabel("Frequency")
-plt.ylabel("Number of certain level of frequency")
-plt.show()
+# plt.hist(list(mask.tolist()))
+# plt.xticks([1, 2, 3, 4, 5], labels=[f"{label}: {value}" for label, value in frequency_dict.items()])
+# plt.title("Frequency of wearing face mask in public for individuals in Australia")
+# plt.xlabel("Frequency")
+# plt.ylabel("Number of certain level of frequency")
+# plt.show()
 # done
 
+# ** 
 # Create a line plot for each frequency level
+# ** #
+
 # Convert "qweek" to a categorical data type with original order
 df["qweek"] = pd.Categorical(df["qweek"], categories=df["qweek"].unique(), ordered=True)
 
-for label, freq in frequency_dict.items():
-    subset = df[df["i12_health_1"] == label]
-    counts_per_week = subset.groupby("qweek").size()
-    plt.plot(counts_per_week.index, counts_per_week.values, marker='o', linestyle='-', label=f"{label}")
+#states
+# Get unique states in the dataset
+unique_states = df["state"].unique()
 
-plt.title("Total Number of People for Each Frequency Level vs Time in Australia")
-plt.xlabel("Time")
-plt.ylabel("Total Number of People")
+# Calculate the number of rows and columns for subplots
+num_rows = len(unique_states) // 2 + len(unique_states) % 2
+num_cols = 2
+
+# Create subplots for each state
+fig, axes = plt.subplots(num_rows, num_cols, figsize=(15, 5 * num_rows), sharex=True)
 plt.xticks(rotation=45)
-plt.legend()
+
+for i, state in enumerate(unique_states):
+    row = i // num_cols
+    col = i % num_cols
+    ax = axes[row, col]
+    for label, freq in frequency_dict.items():
+        df_state = df[df["state"] == state]
+        subset = df_state[df_state["i12_health_1"] == label]
+        counts_per_week = subset.groupby("qweek", observed=False).size()
+        ax.plot(counts_per_week.index, counts_per_week.values, marker='o', linestyle='-', label=f"{label}")
+
+    ax.set_title(f"Total Number of People for Each Frequency Level vs Time in {state}")
+    ax.set_ylabel("Total Number of People")
+    
+    ax.legend()
+
+# Set common X-axis label
+plt.xticks(rotation=45)
+plt.xlabel("Time")
+
+# Adjust layout
+plt.tight_layout()
+# plt.show()
+# done
+
+# gender
+# Get unique gender in the dataset
+unique_gender = df["gender"].unique()
+
+# Create subplots for each gender
+fig, axes = plt.subplots(len(unique_gender), 1, figsize=(10, 5 * len(unique_gender)), sharex=True)
+
+for i, gender in enumerate(unique_gender):
+    ax = axes[i]
+    for label, freq in frequency_dict.items():
+        df_gender = df[df["gender"] == gender]
+        subset = df_gender[df_gender["i12_health_1"] == label]
+        counts_per_week = subset.groupby("qweek", observed=False).size()
+        ax.plot(counts_per_week.index, counts_per_week.values, marker='o', linestyle='-', label=f"{label}")
+
+    ax.set_title(f"Total Number of People for Each Frequency Level vs Time in {gender}")
+    ax.set_ylabel("Total Number of People")
+    ax.legend()
+
+# Set common X-axis label
+plt.xticks(rotation=45)
+plt.xlabel("Time")
+
+# Adjust layout
+plt.tight_layout()
+
+# age_cat
+# Get unique age_cat in the dataset
+# unique_age = df["age_cat"].unique()
+
+# # Create subplots for each age
+# fig, axes = plt.subplots(len(unique_age), 1, figsize=(10, 5 * len(unique_age)), sharex=True)
+
+# for i, age in enumerate(unique_age):
+#     ax = axes[i]
+#     for label, freq in frequency_dict.items():
+#         df_age = df[df["age_cat"] == age]
+#         subset = df_age[df_age["i12_health_1"] == label]
+#         counts_per_week = subset.groupby("qweek", observed=False).size()
+#         ax.plot(counts_per_week.index, counts_per_week.values, marker='o', linestyle='-', label=f"{label}")
+
+#     ax.set_title(f"Total Number of People for Each Frequency Level vs Time in {age}")
+#     ax.set_ylabel("Total Number of People")
+#     ax.legend()
+
+# # Set common X-axis label
+# plt.xlabel("Time")
+
+# # Adjust layout
+# plt.tight_layout()
 plt.show()
