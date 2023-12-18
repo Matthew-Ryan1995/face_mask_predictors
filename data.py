@@ -67,10 +67,10 @@ for row in csv_reader2:
         if count == 49:
             full_rec_vars.append(var_name)
             # print(f"The variable called {var_name:>16}, its amount of TRUE is {count}.")
-# print(full_rec_vars)
+print(full_rec_vars)
 # Double Check NULL value in these variables
-# for var in full_rec_vars:
-#     print(f"{var : >16} has total amount of missing value of {df[var].isnull().sum()}")
+for var in full_rec_vars:
+    print(f"{var : >16} has total amount of missing value of {df[var].isnull().sum()}")
 
 # **
 # Scatter plot to see how the data distribute
@@ -174,4 +174,4 @@ plt.tight_layout()
 
 # # Adjust layout
 # plt.tight_layout()
-plt.show()
+# plt.show()
