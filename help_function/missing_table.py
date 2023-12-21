@@ -1,5 +1,6 @@
 '''
-This script will read in the dataset, find the missing values for each variable, and output into a csv file named "data/missing_value_counts.csv".
+This script will read in the dataset, find the missing values for each variable,
+and output into a csv file named "data/missing_value_counts.csv".
     
 Author:
     Jinjing Ye
