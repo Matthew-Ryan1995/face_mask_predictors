@@ -1,13 +1,29 @@
+'''
+It is useful to have a quick description of the scripts purpose up here.
+
+For example:
+    
+    This script will read in the dataset, select relevant columns, and clean
+    the data.
+    
+Author:
+    Jinjing Ye
+    
+Date created:
+    23/12/2023
+'''
+
 # filter out those with missing values larger than 5000
 import pandas as pd
 import datetime as datetime
 from missing_table import missing_value_df
 
-##note: More needs to be added to this script to clean the columns as needs be
+# note: More needs to be added to this script to clean the columns as needs be
 
-df = pd.read_csv("raw_data/australia.csv")
+# edit: changed filed path
+df = pd.read_csv("../raw_data/australia.csv")
 # Set the threshold for missing value count
-##edit: change cound to 1006
+# edit: change cound to 1006
 thresh_value = 1006
 
 # Extract the variable names with missing value counts larger than 1000

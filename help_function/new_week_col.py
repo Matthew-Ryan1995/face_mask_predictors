@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import csv
 from datetime import datetime, timedelta
 
-# note: This should be part of the clean_dataset.py script
 # Function to convert the date format
+##note: This should be part of the clean_dataset.py script
 
 
 def convert_date_format(date_str):
