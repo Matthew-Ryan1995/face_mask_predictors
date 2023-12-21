@@ -36,7 +36,8 @@ def convert_date_format(date_str):
 # note: More needs to be added to this script to clean the columns as needs be
 
 # edit: changed filed path
-df = pd.read_csv("raw_data/australia.csv")
+df = pd.read_csv("raw_data/australia.csv",
+                 na_values=[" ", "__NA__"], keep_default_na = True)
 # Set the threshold for missing value count
 # edit: change cound to 1006
 thresh_value = 1006

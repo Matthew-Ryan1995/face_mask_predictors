@@ -12,7 +12,7 @@ import pandas as pd
     
 # edit added ../ so code would run
 df = pd.read_csv("raw_data/australia.csv",
-                 na_values=[" ", "__NA__"])  # edit: This makes pandas read these values in the csv as missing
+                 na_values=[" ", "__NA__"], keep_default_na = True)  # edit: This makes pandas read these values in the csv as missing
 
 # Double Check NULL value in these variables
 missing_value_counts = {}
