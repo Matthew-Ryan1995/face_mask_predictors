@@ -3,15 +3,6 @@ import matplotlib.pyplot as plt
 import csv
 first_line = True
 
-# show headers
-# csv_reader = csv.reader(open("raw_data/australia.csv"))
-
-# for row in csv_reader:
-#     if first_line:
-#         first_line = False
-#     else:
-        # check N/A number and the mean of the question answer
-
 # N/A and mean of the column related to the mask
 df = pd.read_csv("raw_data/australia_a.csv")
 
@@ -19,8 +10,8 @@ frequency_dict = {"Always":1, "Frequently":2, "Sometimes":3, "Rarely":4, "Not at
 mask = df["i12_health_1"]
 
 mask = mask.map(frequency_dict)
-print("i12_health_1: No. of N/A is", mask.isnull().sum(), "and the mean is", round(mask.mean(),2))
-print("\n")
+# print("i12_health_1: No. of N/A is", mask.isnull().sum(), "and the mean is", round(mask.mean(),2))
+# print("\n")
 
 # **
 # Time maner plot
@@ -48,29 +39,29 @@ qweek = df["qweek"]
 # **
 # Find the column with the same amount
 # **#
-csv_reader2 = csv.reader(open("raw_data/when.csv"))
-first_line = True
-for row in csv_reader2:
-    if first_line: #once
-        full_rec_vars = []
-        first_line = False
-    else:
-        first_col = True
-        for col in row:
-            if first_col:
-                count = 0
-                var_name = col
-                first_col = False
-            else:
-                if col == "TRUE":
-                    count += 1
-        if count == 49:
-            full_rec_vars.append(var_name)
-            # print(f"The variable called {var_name:>16}, its amount of TRUE is {count}.")
-print(full_rec_vars)
-# Double Check NULL value in these variables
-for var in full_rec_vars:
-    print(f"{var : >16} has total amount of missing value of {df[var].isnull().sum()}")
+# csv_reader2 = csv.reader(open("raw_data/when.csv"))
+# first_line = True
+# for row in csv_reader2:
+#     if first_line: #once
+#         full_rec_vars = []
+#         first_line = False
+#     else:
+#         first_col = True
+#         for col in row:
+#             if first_col:
+#                 count = 0
+#                 var_name = col
+#                 first_col = False
+#             else:
+#                 if col == "TRUE":
+#                     count += 1
+#         if count == 49:
+#             full_rec_vars.append(var_name)
+#             # print(f"The variable called {var_name:>16}, its amount of TRUE is {count}.")
+# print(full_rec_vars)
+# # Double Check NULL value in these variables
+# for var in full_rec_vars:
+#     print(f"{var : >16} has total amount of missing value of {df[var].isnull().sum()}")
 
 # **
 # Scatter plot to see how the data distribute
@@ -124,33 +115,37 @@ plt.tight_layout()
 # plt.show()
 # done
 
+# ** 
 # gender
+# **
 # Get unique gender in the dataset
-unique_gender = df["gender"].unique()
+# unique_gender = df["gender"].unique()
 
-# Create subplots for each gender
-fig, axes = plt.subplots(len(unique_gender), 1, figsize=(10, 5 * len(unique_gender)), sharex=True)
+# # Create subplots for each gender
+# fig, axes = plt.subplots(len(unique_gender), 1, figsize=(10, 5 * len(unique_gender)), sharex=True)
 
-for i, gender in enumerate(unique_gender):
-    ax = axes[i]
-    for label, freq in frequency_dict.items():
-        df_gender = df[df["gender"] == gender]
-        subset = df_gender[df_gender["i12_health_1"] == label]
-        counts_per_week = subset.groupby("qweek", observed=False).size()
-        ax.plot(counts_per_week.index, counts_per_week.values, marker='o', linestyle='-', label=f"{label}")
+# for i, gender in enumerate(unique_gender):
+#     ax = axes[i]
+#     for label, freq in frequency_dict.items():
+#         df_gender = df[df["gender"] == gender]
+#         subset = df_gender[df_gender["i12_health_1"] == label]
+#         counts_per_week = subset.groupby("qweek", observed=False).size()
+#         ax.plot(counts_per_week.index, counts_per_week.values, marker='o', linestyle='-', label=f"{label}")
 
-    ax.set_title(f"Total Number of People for Each Frequency Level vs Time in {gender}")
-    ax.set_ylabel("Total Number of People")
-    ax.legend()
+#     ax.set_title(f"Total Number of People for Each Frequency Level vs Time in {gender}")
+#     ax.set_ylabel("Total Number of People")
+#     ax.legend()
 
-# Set common X-axis label
-plt.xticks(rotation=45)
-plt.xlabel("Time")
+# # Set common X-axis label
+# plt.xticks(rotation=45)
+# plt.xlabel("Time")
 
-# Adjust layout
-plt.tight_layout()
+# # Adjust layout
+# plt.tight_layout()
 
+#** 
 # age_cat
+#**
 # Get unique age_cat in the dataset
 # unique_age = df["age_cat"].unique()
 
