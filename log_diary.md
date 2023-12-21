@@ -16,4 +16,7 @@
 **Solution3:** Convet it to the date type <df["endtime"] = pd.to_datetime(df["endtime"])>
 Then sort the dataframe before groupby <df = df.sort_values(by=["endtime"])>
 
+**Issue4:** Not able to drop the columns with NA
+**Solution4:** <df.dropna(inplace = True)>
+
 **To do tmr:** Plot scatter or box plot for grouped week for frequency. For example each week has an average of the frequency or box.
