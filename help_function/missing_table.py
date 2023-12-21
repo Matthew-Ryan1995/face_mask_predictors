@@ -20,5 +20,5 @@ for col in df:
 missing_value_df = pd.DataFrame(list(missing_value_counts.items()), columns=['Variable Name', 'Missing Value Count'])
 missing_value_df = missing_value_df.sort_values(by=['Missing Value Count','Variable Name'])
 
-# Save the DataFrame to a CSV file
+# Save the DataFrame to a CSV file 
 missing_value_df.to_csv('missing_value_counts.csv', index=False)

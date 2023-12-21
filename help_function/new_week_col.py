@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import csv
 from datetime import datetime, timedelta
 
-# Function to convert the date format
+# Function to convert the date format 
 def convert_date_format(date_str):
     try:
         date_time_obj = datetime.strptime(date_str, '%d/%m/%Y %H:%M')

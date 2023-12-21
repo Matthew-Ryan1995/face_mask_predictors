@@ -12,6 +12,7 @@ columns_to_drop = missing_value_df.loc[missing_value_df['Missing Value Count'] >
 columns_to_drop.append('q_other') # __NA__ covers almost all of the columns
 columns_to_drop.append('i14_health_other') # __NA__ covers almost all of the columns
 
+
 df.drop(columns=columns_to_drop, inplace = True)
 df.dropna(inplace= True)
 # print(df)
