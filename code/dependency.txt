@@ -1,0 +1,4 @@
+jupyter notebook
+datetime
+pandas
+matplotlib.pyplot
