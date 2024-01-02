@@ -19,7 +19,7 @@ def convert_date_format(date_str):
         raise ValueError(f"Unsupported date format: {date_str}")
     
 # N/A and mean of the column related to the mask
-df = pd.read_csv("raw_data/australia_a.csv")
+df = pd.read_csv("raw_data/australia.csv")
 
 frequency_dict = {"Always": 5, "Frequently": 4, "Sometimes": 3, "Rarely": 2, "Not at all": 1}
 mask = df["i12_health_1"]
@@ -35,7 +35,7 @@ end_date = df['endtime'].max()
 # Create a new column 'week_number' and assign week numbers
 df['week_number'] = ((df['endtime'] - start_date).dt.days // 14) + 1
 week_number = df["week_number"]
-# States and their start/end times
+# States and their start/end times 
 states_data = {
     "Australian Capital Territory": ["28/6/2021", "25/2/2022"],
     "New South Wales": ["4/1/2021", "20/9/2022"],
@@ -83,7 +83,6 @@ for i, state in enumerate(unique_states):
 
     ax.set_title(f"Total Number of People for Each Frequency Level vs Time in {state}")
     ax.set_ylabel("Total Number of People \nin wearing the mask outside home")
-    
 
     ax.tick_params(axis='x', rotation=45)
     ax.legend()
