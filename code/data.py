@@ -4,7 +4,7 @@ import csv
 first_line = True
 
 # N/A and mean of the column related to the mask
-df = pd.read_csv("raw_data/australia_a.csv")
+df = pd.read_csv("raw_data/australia.csv")
 
 frequency_dict = {"Always":1, "Frequently":2, "Sometimes":3, "Rarely":4, "Not at all":5}
 mask = df["i12_health_1"]
