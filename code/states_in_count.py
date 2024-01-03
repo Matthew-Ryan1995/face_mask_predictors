@@ -77,7 +77,7 @@ for i, state in enumerate(unique_states):
     if start_time:
         start_time = pd.to_datetime(start_time, format='%d/%m/%Y')
         ax.axvline(x=((start_time - start_date).days // 14) + 1, color='green', linestyle='--', label='Face mask mandate Starts')
-    if end_time:
+    if end_time and (state == "Australian Capital Territory" or state == "Northen Territory" or state == "Queensland" or state == "Tasmania"):
         end_time = pd.to_datetime(end_time, format='%d/%m/%Y')
         ax.axvline(x=((end_time - start_date).days // 14) + 1, color='red', linestyle='--', label='Face mask mandate Ends')
 
