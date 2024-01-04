@@ -12,7 +12,7 @@ Date created:
 import pandas as pd
     
 # edit added ../ so code would run
-df = pd.read_csv("../raw_data/australia.csv",
+df = pd.read_csv("raw_data/australia.csv",
                  na_values=[" ", "__NA__"], keep_default_na = True, low_memory=False)  # edit: This makes pandas read these values in the csv as missing
 
 # Double Check NULL value in these variables
@@ -33,4 +33,4 @@ missing_value_df = missing_value_df.sort_values(
 
 # Save the DataFrame to a CSV file
 # edit: File path changed so things save properly
-missing_value_df.to_csv('../data/missing_value_counts.csv', index=False)
+missing_value_df.to_csv('data/missing_value_counts.csv', index=False)

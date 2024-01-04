@@ -39,7 +39,7 @@ def convert_date_format(date_str):
 
 
 # edit: changed filed path
-df = pd.read_csv("../raw_data/australia.csv",
+df = pd.read_csv("raw_data/australia.csv",
                  na_values=[" ", "__NA__"], keep_default_na=True)
 # Set the threshold for missing value count
 # edit: change cound to 10781
@@ -51,26 +51,34 @@ columns_to_drop = missing_value_df.loc[missing_value_df['Missing Value Count']
 
 df.drop(columns=columns_to_drop, inplace=True)
 
-# Add N/A category to d1 and PHQ columns for specific weeks (from 19/02/21 to 18/10/21)
-
-# create a new column in the csv that computer from week 1 for every two weeks
+# Add N/A category to d1 and PHQ columns for specific weeks (from 19/02/21 week25 to 18/10/21 week43)
+# Add n/a category to d1 and PHQ to clean the dataset to add in another category in weeks 
 df["endtime"] = df["endtime"].apply(convert_date_format)
 df["endtime"] = pd.to_datetime(df["endtime"])
+sdate = "19-02-2021"
+edate = "18-10-2021"
+mask = (df["endtime"] <= edate) & (df["endtime"] >= sdate)
+# print(df.loc[mask, "PHQ4_4"].unique())
+print(df.loc[mask, "PHQ4_4"].isnull().sum())
 
-# Find the start date (minimum date) and end date (maximum date)
-start_date = df['endtime'].min()
-end_date = df['endtime'].max()
+df.loc[mask, "PHQ4_4"] = df.loc[mask, "PHQ4_4"].fillna("N/A")
+print(df.loc[mask, "PHQ4_4"].isnull().sum())
 
-# Create a new column 'week_number' and assign week numbers
-df['week_number'] = ((df['endtime'] - start_date).dt.days // 14) + 1
+# # create a new column in the csv that computer from week 1 for every two weeks
+
+# # Find the start date (minimum date) and end date (maximum date)
+# start_date = df['endtime'].min()
+# end_date = df['endtime'].max()
+
+# # Create a new column 'week_number' and assign week numbers
+# df['week_number'] = ((df['endtime'] - start_date).dt.days // 14) + 1
+
+# # Add in cleaning of other variables as well
+
+# # Do this last
+# df.dropna(inplace=True)
 
 
-# Add in cleaning of other variables as well
-
-# Do this last
-df.dropna(inplace=True)
-
-
-# Save the cleaned DataFrame to a new CSV file
-# edit: fixed file path/save location
-df.to_csv("../data/cleaned_data.csv", index=False)
+# # Save the cleaned DataFrame to a new CSV file
+# # edit: fixed file path/save location
+# df.to_csv("data/cleaned_data.csv", index=False)
