@@ -58,12 +58,30 @@ df["endtime"] = pd.to_datetime(df["endtime"])
 sdate = "19-02-2021"
 edate = "18-10-2021"
 mask = (df["endtime"] <= edate) & (df["endtime"] >= sdate)
-# print(df.loc[mask, "PHQ4_4"].unique())
-print(df.loc[mask, "PHQ4_4"].isnull().sum())
 
-df.loc[mask, "PHQ4_4"] = df.loc[mask, "PHQ4_4"].fillna("N/A")
-print(df.loc[mask, "PHQ4_4"].isnull().sum())
+# Clean the d1_health and PHQ4
+for i in range(1,5):
+    # print(df.loc[mask, f"PHQ4_{i}"].isnull().sum())
+    df.loc[mask, f"PHQ4_{i}"] = df.loc[mask, f"PHQ4_{i}"].fillna("N/A")
+    # print(df.loc[mask, f"PHQ4_{i}"].isnull().sum())
 
+for i in range(1,14):
+    # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
+    df.loc[mask, f"d1_health_{i}"] = df.loc[mask, f"d1_health_{i}"].fillna("N/A")
+    # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
+
+for i in range(98,100):
+    # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
+    df.loc[mask, f"d1_health_{i}"] = df.loc[mask, f"d1_health_{i}"].fillna("N/A")
+    # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
+
+# Add in cleaning of other variables as well    
+# Drop the useless columns
+df = df.drop(["RecordNo", "household_size", "qweek"], axis = 1)
+
+# Compare those columns with similar factor i.e. face mask
+
+    
 # # create a new column in the csv that computer from week 1 for every two weeks
 
 # # Find the start date (minimum date) and end date (maximum date)
@@ -73,7 +91,7 @@ print(df.loc[mask, "PHQ4_4"].isnull().sum())
 # # Create a new column 'week_number' and assign week numbers
 # df['week_number'] = ((df['endtime'] - start_date).dt.days // 14) + 1
 
-# # Add in cleaning of other variables as well
+
 
 # # Do this last
 # df.dropna(inplace=True)
