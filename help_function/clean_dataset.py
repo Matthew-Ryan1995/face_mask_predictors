@@ -77,26 +77,34 @@ for i in range(98,100):
 
 # Add in cleaning of other variables as well    
 # Drop the useless columns
-df = df.drop(["RecordNo", "household_size", "qweek"], axis = 1)
+df = df.drop(["RecordNo", "household_size", "qweek", "weight"], axis = 1)
 
+# change the string into scale values
+for i in range(1, 3):
+    df[f"r1_{i}"] = df[f"r1_{i}"].replace("7 - Agree", 7)
+    df[f"r1_{i}"] = df[f"r1_{i}"].replace("1 - Disagree", 1)
+
+frequency_dict = {"Always": 5, "Frequently": 4, "Sometimes": 3, "Rarely": 2, "Not at all": 1}
+for i in range():
+    df[] = df[].map(frequency_dict)
 # Compare those columns with similar factor i.e. face mask
 
     
-# # create a new column in the csv that computer from week 1 for every two weeks
+# create a new column in the csv that computer from week 1 for every two weeks
 
-# # Find the start date (minimum date) and end date (maximum date)
-# start_date = df['endtime'].min()
-# end_date = df['endtime'].max()
+# Find the start date (minimum date) and end date (maximum date)
+start_date = df['endtime'].min()
+end_date = df['endtime'].max()
 
-# # Create a new column 'week_number' and assign week numbers
-# df['week_number'] = ((df['endtime'] - start_date).dt.days // 14) + 1
-
-
-
-# # Do this last
-# df.dropna(inplace=True)
+# Create a new column 'week_number' and assign week numbers
+df['week_number'] = ((df['endtime'] - start_date).dt.days // 14) + 1
 
 
-# # Save the cleaned DataFrame to a new CSV file
-# # edit: fixed file path/save location
-# df.to_csv("data/cleaned_data.csv", index=False)
+
+# Do this last
+df.dropna(inplace=True)
+
+
+# Save the cleaned DataFrame to a new CSV file
+# edit: fixed file path/save location
+df.to_csv("data/cleaned_data.csv", index=False)
