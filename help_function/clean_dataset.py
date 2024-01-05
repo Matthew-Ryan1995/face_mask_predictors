@@ -60,7 +60,7 @@ edate = "18-10-2021"
 mask = (df["endtime"] <= edate) & (df["endtime"] >= sdate)
 
 # Clean the d1_health and PHQ4
-phq_answer = {"Not at all": 1, "Several days": 2, "More than half the days": 3, "Nearly every day": 4, "Prefer not to say": 99}
+phq_answer = {"Not at all": 1, "Several days": 2, "More than half the days": 3, "Nearly every day": 4, "Prefer not to say": 5}
 for i in range(1,5):
     # print(df.loc[mask, f"PHQ4_{i}"].isnull().sum())
     df.loc[mask, f"PHQ4_{i}"] = df.loc[mask, f"PHQ4_{i}"].fillna("N/A")
@@ -80,6 +80,9 @@ for i in range(98,100):
     df[f"d1_health_{i}"] = df[f"d1_health_{i}"].map(d1_answer)
     # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
 
+wcr_answer = {"Very well":1, "Somewhat well": 2, "Somewhat badly": 3, "Very badly": 4, "Don't know": 5}
+for i in range(1,3):
+    df[f"WCRex{i}"] = df[f"WCRex{i}"].map(wcr_answer)
 # Add in cleaning of other variables as well    
 # Drop the useless columns
 df = df.drop(["RecordNo", "household_size", "qweek", "weight"], axis = 1)
@@ -98,6 +101,9 @@ df["i9_health"] = df["i9_health"].map(i9_answer)
 
 i11_answer = {"Very willing": 1, "Somewhat willing": 2, "Neither willing nor unwilling": 3 ,"Somewhat unwilling": 4, "Very unwilling": 5, "Not sure": 6}
 df["i11_health"] = df["i11_health"].map(i11_answer)
+
+employ_answer = {"Full time employment": 1, "Part time employment": 2, "Full time student": 3, "Retired": 4, "Unemployed": 5, "Not working":6, "Other":7}
+df["employment_status"] = df["employment_status"].map(employ_answer)
 # Compare those columns with similar factor i.e. face mask
 
     
