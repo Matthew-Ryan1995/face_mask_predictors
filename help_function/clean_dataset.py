@@ -60,33 +60,44 @@ edate = "18-10-2021"
 mask = (df["endtime"] <= edate) & (df["endtime"] >= sdate)
 
 # Clean the d1_health and PHQ4
+phq_answer = {"Not at all": 1, "Several days": 2, "More than half the days": 3, "Nearly every day": 4, "Prefer not to say": 99}
 for i in range(1,5):
     # print(df.loc[mask, f"PHQ4_{i}"].isnull().sum())
     df.loc[mask, f"PHQ4_{i}"] = df.loc[mask, f"PHQ4_{i}"].fillna("N/A")
+    df[f"PHQ4_{i}"] = df[f"PHQ4_{i}"].map(phq_answer)
     # print(df.loc[mask, f"PHQ4_{i}"].isnull().sum())
 
+d1_answer = {"Yes": 1, "No": 0, "N/A": 99}
 for i in range(1,14):
     # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
     df.loc[mask, f"d1_health_{i}"] = df.loc[mask, f"d1_health_{i}"].fillna("N/A")
+    df[f"d1_health_{i}"] = df[f"d1_health_{i}"].map(d1_answer)
     # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
 
 for i in range(98,100):
     # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
     df.loc[mask, f"d1_health_{i}"] = df.loc[mask, f"d1_health_{i}"].fillna("N/A")
+    df[f"d1_health_{i}"] = df[f"d1_health_{i}"].map(d1_answer)
     # print(df.loc[mask, f"d1_health_{i}"].isnull().sum())
 
 # Add in cleaning of other variables as well    
 # Drop the useless columns
 df = df.drop(["RecordNo", "household_size", "qweek", "weight"], axis = 1)
 
-# change the string into scale values
+# Convert the string into values in scale
 for i in range(1, 3):
-    df[f"r1_{i}"] = df[f"r1_{i}"].replace("7 - Agree", 7)
-    df[f"r1_{i}"] = df[f"r1_{i}"].replace("1 - Disagree", 1)
+    df[f"r1_{i}"] = df[f"r1_{i}"].replace({"7 - Agree": 7, "1 – Disagree": 1})
 
 frequency_dict = {"Always": 5, "Frequently": 4, "Sometimes": 3, "Rarely": 2, "Not at all": 1}
-for i in range():
-    df[] = df[].map(frequency_dict)
+for column in df.columns:
+    if column.startswith("i12_health_"):
+        df[column] = df[column].map(frequency_dict)
+
+i9_answer = {"Yes": 1, "No": 0, "Not sure": 99}
+df["i9_health"] = df["i9_health"].map(i9_answer)
+
+i11_answer = {"Very willing": 1, "Somewhat willing": 2, "Neither willing nor unwilling": 3 ,"Somewhat unwilling": 4, "Very unwilling": 5, "Not sure": 6}
+df["i11_health"] = df["i11_health"].map(i11_answer)
 # Compare those columns with similar factor i.e. face mask
 
     
@@ -104,7 +115,7 @@ df['week_number'] = ((df['endtime'] - start_date).dt.days // 14) + 1
 # Do this last
 df.dropna(inplace=True)
 
-
+print(df["r1_1"].value_counts().index.tolist())
 # Save the cleaned DataFrame to a new CSV file
 # edit: fixed file path/save location
 df.to_csv("data/cleaned_data.csv", index=False)
