@@ -52,6 +52,15 @@ columns_to_drop = missing_value_df.loc[missing_value_df['Missing Value Count']
 
 df.drop(columns=columns_to_drop, inplace=True)
 
+# Convert the string into values in scale
+for i in range(1, 3):
+    df[f"r1_{i}"] = df[f"r1_{i}"].replace({"7 - Agree": 7, "6": 6, "5": 5, "4":4, "3": 3, "2": 2, "1 – Disagree": 1}) # Change: change the string to int
+
+frequency_dict = {"Always": 5, "Frequently": 4, "Sometimes": 3, "Rarely": 2, "Not at all": 1}
+for column in df.columns:
+    if column.startswith("i12_health_"):
+        df[column] = df[column].map(frequency_dict)
+
 # Add N/A category to d1 and PHQ columns for specific weeks (from 10/02/21 week25 to 18/10/21 week43)
 # Add n/a category to d1 and PHQ to clean the dataset to add in another category in weeks 
 df["endtime"] = df["endtime"].apply(convert_date_format)
@@ -69,21 +78,17 @@ for index, row in df.iterrows():
                 break  # Exit the loop once a value of 1 is found
     
 
-# Change: have a face mask variable to be target in model
+# Change: have a face mask variable to be target in model i12_health_[1,22,23,25]
+df["face_mask_behaviour_scale"] = df[["i12_health_1", "i12_health_22", "i12_health_23", "i12_health_25"]].mean(axis = 1)
+
+df["face_mask_behaviour_binary"] = df["face_mask_behaviour_scale"].apply(lambda x: "Yes" if x >= 4 else "No")
+
 # Change: compare those wear mask with diagonsed and without diagonosed
+            
 
 # Add in cleaning of other variables as well    
 # Drop the useless columns
 df = df.drop(["RecordNo", "qweek", "weight"], axis = 1)
-
-# Convert the string into values in scale
-for i in range(1, 3):
-    df[f"r1_{i}"] = df[f"r1_{i}"].replace({"7 - Agree": 7, "6": 6, "5": 5, "4":4, "3": 3, "2": 2, "1 – Disagree": 1}) # Change: change the string to int
-
-frequency_dict = {"Always": 5, "Frequently": 4, "Sometimes": 3, "Rarely": 2, "Not at all": 1}
-for column in df.columns:
-    if column.startswith("i12_health_"):
-        df[column] = df[column].map(frequency_dict)
     
 # create a new column in the csv that computer from week 1 for every two weeks
 
