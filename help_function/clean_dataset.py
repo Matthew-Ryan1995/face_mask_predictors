@@ -24,7 +24,7 @@ from datetime import datetime
 def convert_date_format(date_str):
     try:
         date_time_obj = datetime.strptime(date_str, '%d/%m/%Y %H:%M')
-        formatted_date = date_time_obj.strftime('%m/%d/%Y')
+        formatted_date = date_time_obj.strftime('%d/%m/%Y')
         return formatted_date
     except ValueError:
         pass
@@ -61,13 +61,31 @@ for column in df.columns:
     if column.startswith("i12_health_"):
         df[column] = df[column].map(frequency_dict)
 
-# Add N/A category to d1 and PHQ columns for specific weeks (from 10/02/21 week25 to 18/10/21 week43)
-# Add n/a category to d1 and PHQ to clean the dataset to add in another category in weeks 
+# Add n/a category to d1 and PHQ to clean the dataset to add in another category in weeks (from 10/02/21 week25 to 18/10/21 week43)
 df["endtime"] = df["endtime"].apply(convert_date_format)
 df["endtime"] = pd.to_datetime(df["endtime"])
 sdate = "10-02-2021" # Change: sdate -> 10-02-2021
 edate = "18-10-2021"
 mask = (df["endtime"] <= edate) & (df["endtime"] >= sdate)
+# Update: add n/a category
+for i in range(1,5):
+    df.loc[mask, f"PHQ4_{i}"] = df.loc[mask, f"PHQ4_{i}"].fillna("N/A")
+
+for i in range(1,14):
+    df.loc[mask, f"d1_health_{i}"] = df.loc[mask, f"d1_health_{i}"].fillna("N/A")
+
+for i in range(98,100):
+    df.loc[mask, f"d1_health_{i}"] = df.loc[mask, f"d1_health_{i}"].fillna("N/A")
+
+# Update: household to numeric and n/a to see whether loss data/ might categorical? 0-2, 2-4
+for index, row in df.iterrows():
+    for col in df.columns:
+        if col == "household_size":
+            if row[col] == "8 or more":
+                df["household_size"] = 8
+            elif row[col] == "":
+
+
 # Change: squash d1_health into one column
 df["d1_health_atleastone"] = "No"
 for index, row in df.iterrows():
@@ -76,10 +94,16 @@ for index, row in df.iterrows():
             if row[col] == "Yes":
                 df.at[index, "d1_health_atleastone"] = "Yes"
                 break  # Exit the loop once a value of 1 is found
+        elif col.startswith("d1_health") and col.endswith("98"):
+            if row[col] == "Yes":
+                df.at[index, "d1_health_atleastone"] = "Prefer not to say"
+        elif col.startswith("d1_health") and col.endswith("99"):
+            if row[col] == "Yes":
+                df.at[index, "d1_health_atleastone"] = "None of these"
     
 
 # Change: have a face mask variable to be target in model i12_health_[1,22,23,25]
-df["face_mask_behaviour_scale"] = df[["i12_health_1", "i12_health_22", "i12_health_23", "i12_health_25"]].mean(axis = 1)
+df["face_mask_behaviour_scale"] = df[["i12_health_1", "i12_health_22", "i12_health_23", "i12_health_25"]].median(axis = 1)
 
 df["face_mask_behaviour_binary"] = df["face_mask_behaviour_scale"].apply(lambda x: "Yes" if x >= 4 else "No")
 
@@ -99,9 +123,7 @@ end_date = df['endtime'].max()
 # Create a new column 'week_number' and assign week numbers
 df['week_number'] = ((df['endtime'] - start_date).dt.days // 14) + 1
 
-
-
-# Do this last
+# Do this last 34452
 df.dropna(inplace=True)
 
 # Save the cleaned DataFrame to a new CSV file

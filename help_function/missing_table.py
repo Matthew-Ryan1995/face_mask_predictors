@@ -34,3 +34,6 @@ missing_value_df = missing_value_df.sort_values(
 # Save the DataFrame to a CSV file
 # edit: File path changed so things save properly
 missing_value_df.to_csv('data/missing_value_counts.csv', index=False)
+
+#  Write down: why that threshold
+#  explore three models with preprocessing
