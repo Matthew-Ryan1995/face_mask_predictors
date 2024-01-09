@@ -90,7 +90,7 @@ for index, row in df.iterrows():
 df["face_mask_behaviour_scale"] = df[["i12_health_1", "i12_health_22", "i12_health_23", "i12_health_25"]].median(axis = 1)
 df["face_mask_behaviour_binary"] = df["face_mask_behaviour_scale"].apply(lambda x: "Yes" if x >= 4 else "No")
 
-df = df.drop(["RecordNo", "qweek", "weight"], axis = 1)
+df = df.drop(["qweek", "weight"], axis = 1)
 # create a new column in the csv that computer from week 1 for every two weeks
 start_date = df['endtime'].min()
 end_date = df['endtime'].max()
