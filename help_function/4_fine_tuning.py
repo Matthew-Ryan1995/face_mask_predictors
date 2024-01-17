@@ -37,8 +37,10 @@ def objective(trial):
     y = cleaned_df.face_mask_behaviour_binary # Target variable
 
     rf_max_depth = trial.suggest_int("rf_max_depth", 2, 32, log=True)
+    n_estimators_max = trial.suggest_int("n_estimators", 50, 400)
+
     classifier_obj = sklearn.ensemble.RandomForestClassifier(
-        max_depth=rf_max_depth, n_estimators=10
+        max_depth=rf_max_depth, n_estimators=n_estimators_max
     )
 
     score = sklearn.model_selection.cross_val_score(classifier_obj, x, y, n_jobs=-1, cv=5)
