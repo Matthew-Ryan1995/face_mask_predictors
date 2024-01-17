@@ -36,14 +36,15 @@ X = cleaned_df[feature_cols] # Features
 y = cleaned_df.face_mask_behaviour_binary # Target variable
 
 # Split dataset into training set and test set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 30% test
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 30% test
 
-rf = RandomForestClassifier(n_estimators=100, random_state= 1)
-rf.fit(X_train, y_train)
-y_pred_rf = rf.predict(X_test)
+rf = RandomForestClassifier(n_estimators=100, random_state= 1
+                            )
+# rf.fit(X_train, y_train)
+# y_pred_rf = rf.predict(X_test)
 
-cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)
-cv_scores = cross_val_score(rf, X, y, cv=cv, scoring='accuracy')
+# cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)
+cv_scores = cross_val_score(rf, X, y, cv=5, scoring='accuracy')
 
 # Print the accuracy scores for each fold
 print("Cross-validation scores:", cv_scores)

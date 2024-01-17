@@ -1,8 +1,10 @@
 import optuna
-from sklearn.ensemble import RandomForestClassifier
+import sklearn.datasets
+import sklearn.ensemble
 import sklearn.model_selection
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
 
 def objective(trial):
@@ -37,22 +39,21 @@ def objective(trial):
     y = cleaned_df.face_mask_behaviour_binary # Target variable
 
     rf_max_depth = trial.suggest_int("rf_max_depth", 2, 32, log=True)
-    # n_estimators_max = trial.suggest_int("n_estimators", )
-
+    n_estimators_max = trial.suggest_int("n_estimators", 50, 400)
 
     classifier_obj = RandomForestClassifier(
-        n_estimators=10, #random_state= 1
-        max_depth=rf_max_depth
+        max_depth = rf_max_depth, n_estimators=n_estimators_max
     )
 
-    score = cross_val_score(classifier_obj, x, y, cv=3, scoring='accuracy')
+    score = cross_val_score(classifier_obj, x, y, cv=5, scoring='accuracy')
     accuracy = score.mean()
-    print(score)
     return accuracy
 
 
 if __name__ == "__main__":
-    study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=10)
-    print(study.best_trial)
-
+    study = optuna.create_study()
+    study.optimize(objective,n_trials=20)
+    # print(study.best_trial)
+    # study = RandomForestClassifier(n_estimators=100, random_state= 1)
+    fig = optuna.visualization.plot_param_importances(study)
+    fig.show()
