@@ -1,12 +1,13 @@
 import optuna
 from sklearn.ensemble import RandomForestClassifier
-import sklearn.model_selection
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, KFold
+import numpy as np
+
 
 def objective(trial):
-    cleaned_df = pd.read_csv("data/cleaned_data_preprocessing.csv", keep_default_na = False)
+    cleaned_df = pd.read_csv("../data/cleaned_data_preprocessing.csv", keep_default_na = False)
 
     # Feature Selection
     feature_cols = ['week_number', 'within_mandate_period', 'i2_health', 'i9_health', 'i11_health',
@@ -37,22 +38,23 @@ def objective(trial):
     y = cleaned_df.face_mask_behaviour_binary # Target variable
 
     rf_max_depth = trial.suggest_int("rf_max_depth", 2, 32, log=True)
-    # n_estimators_max = trial.suggest_int("n_estimators", )
+    min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 200)
 
-
-    classifier_obj = RandomForestClassifier(
-        n_estimators=10, #random_state= 1
-        max_depth=rf_max_depth
+    rf = RandomForestClassifier(
+        n_estimators=500,
+        max_depth=rf_max_depth,
+        min_samples_leaf = min_samples_leaf
     )
 
-    score = cross_val_score(classifier_obj, x, y, cv=3, scoring='accuracy')
+    number_folds = 5
+    kf = KFold(n_splits=number_folds)
+    score = cross_val_score(rf, x, y, cv=kf, scoring='accuracy')
     accuracy = score.mean()
-    print(score)
+    trial.set_user_attr("std_err", np.std(score)/np.sqrt(number_folds))
     return accuracy
-
 
 if __name__ == "__main__":
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=10)
+    study.optimize(objective, n_trials=100, njobs=3)
     print(study.best_trial)
 

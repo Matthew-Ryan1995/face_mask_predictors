@@ -2,10 +2,10 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import ShuffleSplit
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, KFold
+from mlxtend.evaluate import bias_variance_decomp
 
-cleaned_df = pd.read_csv("data/cleaned_data_preprocessing.csv", keep_default_na = False)
+cleaned_df = pd.read_csv("../data/cleaned_data_preprocessing.csv", keep_default_na = False)
 
 # Feature Selection
 feature_cols = ['week_number', 'within_mandate_period', 'i2_health', 'i9_health', 'i11_health',
@@ -36,16 +36,33 @@ X = cleaned_df[feature_cols] # Features
 y = cleaned_df.face_mask_behaviour_binary # Target variable
 
 # Split dataset into training set and test set
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 30% test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 30% test
 
-rf = RandomForestClassifier(n_estimators=100, random_state= 1
+rf = RandomForestClassifier(
+                            n_estimators=351, #random_state= 1,
+                            max_depth = 20,                            
+                            # min_samples_leaf= 1, 
                             )
-# rf.fit(X_train, y_train)
-# y_pred_rf = rf.predict(X_test)
+rf.fit(X_train, y_train)
+y_pred_rf = rf.predict(X_test)
 
-# cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)
-cv_scores = cross_val_score(rf, X, y, cv=5, scoring='accuracy')
+kf = KFold(n_splits=3)
+score = cross_val_score(rf, X, y, cv=kf, scoring='accuracy')
 
 # Print the accuracy scores for each fold
-print("Cross-validation scores:", cv_scores)
-print("Mean accuracy:", cv_scores.mean())
+print("Cross-validation scores:", score)
+print("Mean accuracy:", score.mean())
+
+# label_encoder = LabelEncoder()
+# y_train_binary = label_encoder.fit_transform(y_train)
+# y_test_binary = label_encoder.transform(y_test)
+
+# print(metrics.accuracy_score(y_test, y_pred_rf))
+# avg_expected_loss, avg_bias, avg_var = bias_variance_decomp(
+#         rf, X_train.values, y_train_binary, X_test.values, y_test_binary, 
+#         loss='mse',
+#         random_seed=1)
+
+# print(f'Average Expected Loss: {round(avg_expected_loss, 4)}')
+# print(f'Average Bias: {round(avg_bias, 4)}')
+# print(f'Average Variance: {round(avg_var, 4)}')
