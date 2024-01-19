@@ -38,28 +38,24 @@ def objective(trial):
     y = cleaned_df.face_mask_behaviour_binary # Target variable
 
     rf_max_depth = trial.suggest_int("rf_max_depth", 2, 32, log=True)
-    min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 200)
+    # min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 200)
 
     rf = RandomForestClassifier(
-        n_estimators=500,
-        max_depth=rf_max_depth,
-        min_samples_leaf = min_samples_leaf
+        n_estimators=10,
+        max_depth=rf_max_depth
     )
 
     number_folds = 5
-    kf = KFold(n_splits=number_folds)
-    score = cross_val_score(rf, x, y, cv=kf, scoring='accuracy')
+    # kf = KFold(n_splits=number_folds)
+    score = cross_val_score(rf, x, y, cv=number_folds, scoring='accuracy')
     accuracy = score.mean()
     trial.set_user_attr("std_err", np.std(score)/np.sqrt(number_folds))
     return accuracy
 
 if __name__ == "__main__":
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=100, n_jobs=3)
+    study.optimize(objective, n_trials=10, n_jobs=-1)
     for trial in study.trials:
         print(f"Trial: the accuracy is {trial.values} and {trial.user_attrs}.")
 
     print(study.best_trial)
-
-    # print roc_auc curve
-
