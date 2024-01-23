@@ -91,3 +91,12 @@ plt.ylabel('True Positive Rate')
 plt.title('Receiver Operating Characteristic (ROC) Curve')
 plt.legend(loc='lower right')
 plt.show()
+
+# Explore the feature importance
+sort = rf.feature_importances_.argsort()
+plt.figure(figsize=(10, 6))
+plt.barh(X.columns[sort], rf.feature_importances_[sort])
+plt.xlabel("Feature Importance")
+plt.title("Random Forest Feature Importance")
+plt.yticks(fontsize=5)
+plt.show()
