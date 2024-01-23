@@ -8,10 +8,13 @@ from sklearn.metrics import roc_auc_score, roc_curve, auc
 import matplotlib.pyplot as plt
 
 # Read in json file with highest value
-f = open('test_best.json', 'r')
+f = open('data/rf_trial_best.json', 'r')
 obj = json.loads(f.read())
-for param in obj['params']:
-    print(param,obj['params'][param])
+
+# create parameters variables
+param_values = []
+for parm in obj['params']:
+    param_values.append(obj['params'][parm])
 
 f.close()
 
@@ -50,9 +53,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 
 rf = RandomForestClassifier(
                             n_estimators=1000,
-                            # max_depth=,
-                            # max_samples_split=,
-                            # max_samples_leaf=
+                            max_depth= param_values[0],
+                            min_samples_split =param_values[1],
+                            min_samples_leaf = param_values[2]
                             )
 
 # Print the accuracy scores for 10-folder cross validation

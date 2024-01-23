@@ -71,7 +71,7 @@ if __name__ == "__main__":
             "user_attrs": trial.user_attrs,
         }
 
-    with open("test.json", "w") as outfile:
+    with open("data/rf_trials.json", "w") as outfile:
         for trial in study.trials:
                 serialized_trial = {
                     "number": trial.number,
@@ -82,7 +82,7 @@ if __name__ == "__main__":
                 json.dump(serialized_trial, outfile)
 
     # find thr best one
-    with open("test_best.json","w") as outfile:
+    with open("data/rf_trial_best.json","w") as outfile:
         best_trial = study.best_trial
         serialized_trial = {
                         "number": best_trial.number,
