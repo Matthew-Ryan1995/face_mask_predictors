@@ -46,8 +46,8 @@ rf = RandomForestClassifier(
 rf.fit(X_train, y_train)
 y_pred_rf = rf.predict(X_test)
 
-kf = KFold(n_splits=3)
-score = cross_val_score(rf, X, y, cv=kf, scoring='accuracy')
+# kf = KFold(n_splits=3)
+score = cross_val_score(rf, X, y, cv=5, scoring='accuracy')
 
 # Print the accuracy scores for each fold
 print("Cross-validation scores:", score)

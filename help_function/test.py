@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import cross_val_score, KFold
 import numpy as np
-
+import json
 
 def objective(trial):
     cleaned_df = pd.read_csv("data/cleaned_data_preprocessing.csv", keep_default_na = False)
@@ -54,8 +54,39 @@ def objective(trial):
 
 if __name__ == "__main__":
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=10, n_jobs=-1)
+    study.optimize(objective, n_trials=5, n_jobs=-1)
+    # for trial in study.trials:
+    #     print(f"Trial: the accuracy is {trial.values} and {trial.user_attrs}.")
+    
+    serialized_trials = []
     for trial in study.trials:
-        print(f"Trial: the accuracy is {trial.values} and {trial.user_attrs}.")
+        serialized_trial = {
+            "number": trial.number,
+            "value": trial.value,
+            "params": trial.params,
+            "user_attrs": trial.user_attrs,
+        }
+        # serialized_trials.append(serialized_trial)
 
-    print(study.best_trial)
+    with open("test.json", "w") as outfile:
+        for trial in study.trials:
+                serialized_trial = {
+                    "number": trial.number,
+                    "value": trial.value,
+                    "params": trial.params,
+                    "user_attrs": trial.user_attrs,
+                }
+                json.dump(serialized_trial, outfile)
+
+
+# find thr best one
+with open("test_best.json","w") as outfile:
+    best_trial = study.best_trial
+    serialized_trial = {
+                    "number": best_trial.number,
+                    "value": best_trial.value,
+                    "params": best_trial.params,
+                    "user_attrs": best_trial.user_attrs,
+                }
+    
+    json.dump(serialized_trial, outfile)

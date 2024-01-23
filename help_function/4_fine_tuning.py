@@ -4,7 +4,8 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import cross_val_score, KFold
 import numpy as np
-
+import json
+from sklearn.metrics import roc_auc_score
 
 def objective(trial):
     cleaned_df = pd.read_csv("data/cleaned_data_preprocessing.csv", keep_default_na = False)
@@ -38,12 +39,15 @@ def objective(trial):
     y = cleaned_df.face_mask_behaviour_binary # Target variable
 
     rf_max_depth = trial.suggest_int("rf_max_depth", 2, 32, log=True)
+    min_samples_split = trial.suggest_int("min_samples_split", 2, 300)
     min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 200)
 
     rf = RandomForestClassifier(
-        n_estimators=500,
+        n_estimators=1000,
         max_depth=rf_max_depth,
+        min_samples_split = min_samples_split,
         min_samples_leaf = min_samples_leaf
+
     )
 
     number_folds = 5
@@ -55,11 +59,36 @@ def objective(trial):
 
 if __name__ == "__main__":
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=100, n_jobs=3)
+    study.optimize(objective, n_trials=100, n_jobs=-1)
+        
+    # Convert it into json file
+    serialized_trials = []
     for trial in study.trials:
-        print(f"Trial: the accuracy is {trial.values} and {trial.user_attrs}.")
+        serialized_trial = {
+            "number": trial.number,
+            "value": trial.value,
+            "params": trial.params,
+            "user_attrs": trial.user_attrs,
+        }
 
-    print(study.best_trial)
+    with open("test.json", "w") as outfile:
+        for trial in study.trials:
+                serialized_trial = {
+                    "number": trial.number,
+                    "value": trial.value,
+                    "params": trial.params,
+                    "user_attrs": trial.user_attrs,
+                }
+                json.dump(serialized_trial, outfile)
 
-    # print roc_auc curve
-
+    # find thr best one
+    with open("test_best.json","w") as outfile:
+        best_trial = study.best_trial
+        serialized_trial = {
+                        "number": best_trial.number,
+                        "value": best_trial.value,
+                        "params": best_trial.params,
+                        "user_attrs": best_trial.user_attrs,
+                    }
+        
+        json.dump(serialized_trial, outfile)
