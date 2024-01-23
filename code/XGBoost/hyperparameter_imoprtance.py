@@ -5,6 +5,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import cross_val_score, KFold
 import numpy as np
 import json
+from sklearn.metrics import roc_auc_score
+import xgboost as xgb
 
 def objective(trial):
     cleaned_df = pd.read_csv("data/cleaned_data_preprocessing.csv", keep_default_na = False)
@@ -37,56 +39,42 @@ def objective(trial):
     x = cleaned_df[feature_cols] # Features
     y = cleaned_df.face_mask_behaviour_binary # Target variable
 
-    rf_max_depth = trial.suggest_int("rf_max_depth", 2, 32, log=True)
-    # min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 200)
+    learning_rate = trial.suggest_int("learning_rate", 0.05, 0.3, log=True)
+    max_depth = trial.suggest_int("max_depth", 2, 35)
+    min_child_weight = trial.suggest_int("min_child_weight", 1, 10) # 1- imbalance
+    subsample = trial.suggest_int("subsample", 0.5, 0.9)
+    colsample_bytree = trial.suggest_int("colsample_bytree", 0.5, 0.9)
+    scale_pos_weight = trial.suggest_int("scale_pos_weight", 1, 10) # 1- imbalance
+    gamma = trial.suggest_int("gamma", 0, 5)
+    alpha = trial.suggest_float("alpha", 0.0, 2.0)
+    reg_lambda = trial.suggest_float("lambda", 0.0, 2.0)
 
-    rf = RandomForestClassifier(
-        n_estimators=10,
-        max_depth=rf_max_depth
+    xgb_model = xgb.XGBClassifier(
+                            learning_rate=learning_rate,
+                            max_depth=max_depth,
+                            min_child_weight=min_child_weight,
+                            subsample=subsample,
+                            colsample_bytree=colsample_bytree,
+                            scale_pos_weight=scale_pos_weight,
+                            gamma=gamma,
+                            alpha=alpha,
+                            reg_lambda=reg_lambda,
+                            n_estimators = 1000,
+                            objective="binary:logistic",
     )
 
     number_folds = 5
-    # kf = KFold(n_splits=number_folds)
-    score = cross_val_score(rf, x, y, cv=number_folds, scoring='accuracy')
+    kf = KFold(n_splits=number_folds)
+    score = cross_val_score(xgb_model, x, y, cv=kf, scoring='accuracy')
     accuracy = score.mean()
     trial.set_user_attr("std_err", np.std(score)/np.sqrt(number_folds))
     return accuracy
 
 if __name__ == "__main__":
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=5, n_jobs=-1)
-    # for trial in study.trials:
-    #     print(f"Trial: the accuracy is {trial.values} and {trial.user_attrs}.")
-    
-    serialized_trials = []
-    for trial in study.trials:
-        serialized_trial = {
-            "number": trial.number,
-            "value": trial.value,
-            "params": trial.params,
-            "user_attrs": trial.user_attrs,
-        }
-        # serialized_trials.append(serialized_trial)
-
-    with open("test.json", "w") as outfile:
-        for trial in study.trials:
-                serialized_trial = {
-                    "number": trial.number,
-                    "value": trial.value,
-                    "params": trial.params,
-                    "user_attrs": trial.user_attrs,
-                }
-                json.dump(serialized_trial, outfile)
-
-
-# find thr best one
-with open("test_best.json","w") as outfile:
-    best_trial = study.best_trial
-    serialized_trial = {
-                    "number": best_trial.number,
-                    "value": best_trial.value,
-                    "params": best_trial.params,
-                    "user_attrs": best_trial.user_attrs,
-                }
-    
-    json.dump(serialized_trial, outfile)
+    study.optimize(objective,n_trials=10, n_jobs=-1)
+    fig1 = optuna.visualization.plot_optimization_history(study)
+    fig1.show()
+    fig = optuna.visualization.plot_param_importances(study)
+    fig.show()
+    print(study.best_trial)
