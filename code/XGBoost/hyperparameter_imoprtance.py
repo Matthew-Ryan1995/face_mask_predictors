@@ -37,12 +37,13 @@ def objective(trial):
             cleaned_df[col] = label_encoder.fit_transform(cleaned_df[col])
 
     x = cleaned_df[feature_cols] # Features
-    y = cleaned_df.face_mask_behaviour_binary # Target variable
+    y = label_encoder.fit_transform(cleaned_df.face_mask_behaviour_binary)
 
-    learning_rate = trial.suggest_int("learning_rate", 0.05, 0.3, log=True)
+    learning_rate = trial.suggest_float("learning_rate", 0.01, 1)
     max_depth = trial.suggest_int("max_depth", 2, 35)
     min_child_weight = trial.suggest_int("min_child_weight", 1, 10) # 1- imbalance
-    subsample = trial.suggest_int("subsample", 0.5, 0.9)
+    # subsample = trial.suggest_int("subsample", 0.1, 1)
+
     colsample_bytree = trial.suggest_int("colsample_bytree", 0.5, 0.9)
     scale_pos_weight = trial.suggest_int("scale_pos_weight", 1, 10) # 1- imbalance
     gamma = trial.suggest_int("gamma", 0, 5)
@@ -53,7 +54,7 @@ def objective(trial):
                             learning_rate=learning_rate,
                             max_depth=max_depth,
                             min_child_weight=min_child_weight,
-                            subsample=subsample,
+                            # subsample=subsample,
                             colsample_bytree=colsample_bytree,
                             scale_pos_weight=scale_pos_weight,
                             gamma=gamma,
@@ -72,7 +73,7 @@ def objective(trial):
 
 if __name__ == "__main__":
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective,n_trials=10, n_jobs=-1)
+    study.optimize(objective,n_trials=100, n_jobs=-1)
     fig1 = optuna.visualization.plot_optimization_history(study)
     fig1.show()
     fig = optuna.visualization.plot_param_importances(study)
