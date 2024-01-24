@@ -1,5 +1,4 @@
 import optuna
-from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import cross_val_score, KFold

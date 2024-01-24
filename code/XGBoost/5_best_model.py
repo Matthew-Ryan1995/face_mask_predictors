@@ -2,13 +2,13 @@ import json
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score, KFold
 from sklearn.metrics import roc_auc_score, roc_curve, auc
 import matplotlib.pyplot as plt
+import xgboost as xgb
 
 # Read in json file with highest value
-f = open('data/rf_trial_best.json', 'r')
+f = open('data/xgb_trial_best.json', 'r')
 obj = json.loads(f.read())
 
 # create parameters variables
@@ -46,33 +46,42 @@ for col in feature_cols:
         cleaned_df[col] = label_encoder.fit_transform(cleaned_df[col])
 
 X = cleaned_df[feature_cols] # Features
-y = label_encoder.fit_transform(cleaned_df['face_mask_behaviour_binary'])
+y = cleaned_df.face_mask_behaviour_binary # Target variable
 
 # Split dataset into training set and test set
+y = label_encoder.fit_transform(cleaned_df['face_mask_behaviour_binary'])
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 30% test
 
-rf = RandomForestClassifier(
-                            n_estimators=1000,
-                            max_depth= param_values[0],
-                            min_samples_split =param_values[1],
-                            min_samples_leaf = param_values[2]
-                            )
+xgb_model = xgb.XGBClassifier(
+                        learning_rate=param_values[0],
+                        # max_depth=max_depth,
+                        min_child_weight=param_values[1],
+                        # subsample=subsample,
+                        # colsample_bytree=colsample_bytree,
+                        scale_pos_weight=param_values[2],
+                        # gamma=gamma,
+                        # alpha=alpha,
+                        # reg_lambda=reg_lambda,
+                        n_estimators = 1000,
+                        objective="binary:logistic",
+)
 
 # Print the accuracy scores for 10-folder cross validation
 kf = KFold(n_splits=10)
-score = cross_val_score(rf, X, y, cv=kf, scoring='accuracy')
+score = cross_val_score(xgb_model, X, y, cv=kf, scoring='accuracy')
 print("Cross-validation scores:", score)
 print("Mean accuracy:", score.mean())
 
 # print cross validation ROC curve
-rf.fit(X_train, y_train)
-y_pred_rf = rf.predict(X_test)
+xgb_model.fit(X_train, y_train)
+y_pred_xgb_model = xgb_model.predict(X_test)
 
 # Split dataset into training set and test set
-y_pred_proba = rf.predict_proba(X_test)[:, 1]
+y_pred_proba = xgb_model.predict_proba(X_test)[:, 1]
 
 # Convert 'Yes' and 'No' labels to 1 and 0
 y_true_binary = y_test
+
 print(f"roc score: {roc_auc_score(y_true_binary, y_pred_proba)}")
 
 # Calculate ROC curve
@@ -92,10 +101,10 @@ plt.legend(loc='lower right')
 plt.show()
 
 # Explore the feature importance
-sort = rf.feature_importances_.argsort()
+sort = xgb_model.feature_importances_.argsort()
 plt.figure(figsize=(10, 6))
-plt.barh(X.columns[sort], rf.feature_importances_[sort])
+plt.barh(X.columns[sort], xgb_model.feature_importances_[sort])
 plt.xlabel("Feature Importance")
-plt.title("Random Forest Feature Importance")
+plt.title("XGBoost Feature Importance")
 plt.yticks(fontsize=5)
 plt.show()
