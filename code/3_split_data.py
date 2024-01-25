@@ -34,7 +34,7 @@ for col in feature_cols:
 
 X = cleaned_df[feature_cols] # Features
 y = label_encoder.fit_transform(cleaned_df.face_mask_behaviour_binary)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1) # 10% test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=21) # 10% test
 # save these sets into csv file
 X_train.to_csv("data/X_train.csv", index=False)
 X_test.to_csv("data/X_test.csv", index=False)
