@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score, KFold
 from sklearn.metrics import roc_auc_score, roc_curve, auc
 import matplotlib.pyplot as plt
-import xgboost as xgb
+import xgboost as xgb, plot_tree
 
 # Read in json file with highest value
 f = open('data/xgb_trial_best.json', 'r')
@@ -78,3 +78,7 @@ plt.xlabel("Feature Importance")
 plt.title("XGBoost Feature Importance")
 plt.yticks(fontsize=5)
 plt.savefig("figures/xgb_feature_importance.png")
+
+# visualize the xgboost tree
+plot_tree(xgb_model)
+plt.savefig("figures/xgb_visual.png")
