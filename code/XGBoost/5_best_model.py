@@ -18,39 +18,8 @@ for parm in obj['params']:
 
 f.close()
 
-cleaned_df = pd.read_csv("data/cleaned_data_preprocessing.csv", keep_default_na = False)
-
-# Feature Selection
-feature_cols = ['week_number', 'within_mandate_period', 'i2_health', 'i9_health', 'i11_health',
-        'i12_health_2', 'i12_health_3', 'i12_health_4',
-       'i12_health_5', 'i12_health_6', 'i12_health_7', 'i12_health_8',
-       'i12_health_11', 'i12_health_12', 'i12_health_13', 'i12_health_14',
-       'i12_health_15', 'i12_health_16','age', 
-       'household_size', 'WCRex2', 'cantril_ladder', 
-       'PHQ4_1', 'PHQ4_2', 'PHQ4_3', 'PHQ4_4',
-       'd1_health_1', 'd1_health_2', 'd1_health_3', 'd1_health_4', 'd1_health_5', 'd1_health_6',
-       'd1_health_7', 'd1_health_8', 'd1_health_9', 'd1_health_10',
-       'd1_health_11', 'd1_health_12', 'd1_health_13', 'd1_health_98', 'd1_health_99',
-       'WCRex1', 'r1_1', 'r1_2', 'state_New South Wales',
-       'state_Northern Territory', 'state_Queensland', 'state_South Australia',
-       'state_Tasmania', 'state_Victoria', 'state_Western Australia',
-       'gender_Male', 'employment_status_Not working',
-       'employment_status_Part time employment', 'employment_status_Retired',
-       'employment_status_Unemployed']
-
-# Label encoder
-label_encoder = LabelEncoder()
-
-for col in feature_cols:
-    if cleaned_df[col].dtype == 'O':  # Checking if the column contains object (string) values
-        cleaned_df[col] = label_encoder.fit_transform(cleaned_df[col])
-
-X = cleaned_df[feature_cols] # Features
-y = cleaned_df.face_mask_behaviour_binary # Target variable
-
-# Split dataset into training set and test set
-y = label_encoder.fit_transform(cleaned_df['face_mask_behaviour_binary'])
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 30% test
+X_train = pd.read_csv("data/X_train.csv", keep_default_na = False)
+y_train = pd.read_csv("data/y_train.csv", keep_default_na = False).values.ravel()
 
 xgb_model = xgb.XGBClassifier(
                         learning_rate=param_values[0],
@@ -68,11 +37,14 @@ xgb_model = xgb.XGBClassifier(
 
 # Print the accuracy scores for 10-folder cross validation
 kf = KFold(n_splits=10)
-score = cross_val_score(xgb_model, X, y, cv=kf, scoring='accuracy')
+score = cross_val_score(xgb_model, X_train, y_train, cv=kf, scoring='accuracy')
 print("Cross-validation scores:", score)
 print("Mean accuracy:", score.mean())
 
 # print cross validation ROC curve
+X_test = pd.read_csv("data/X_test.csv", keep_default_na = False)
+y_test = pd.read_csv("data/y_test.csv", keep_default_na = False)
+
 xgb_model.fit(X_train, y_train)
 y_pred_xgb_model = xgb_model.predict(X_test)
 
@@ -80,12 +52,10 @@ y_pred_xgb_model = xgb_model.predict(X_test)
 y_pred_proba = xgb_model.predict_proba(X_test)[:, 1]
 
 # Convert 'Yes' and 'No' labels to 1 and 0
-y_true_binary = y_test
-
-print(f"roc score: {roc_auc_score(y_true_binary, y_pred_proba)}")
+print(f"roc score: {roc_auc_score(y_test, y_pred_proba)}")
 
 # Calculate ROC curve
-false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true_binary, y_pred_proba)
+false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test, y_pred_proba)
 
 # Calculate AUC
 roc_auc = auc(false_positive_rate, true_positive_rate)
@@ -98,13 +68,13 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Receiver Operating Characteristic (ROC) Curve')
 plt.legend(loc='lower right')
-plt.show()
+plt.savefig("figures/xgb_roc_curve.png")
 
 # Explore the feature importance
 sort = xgb_model.feature_importances_.argsort()
 plt.figure(figsize=(10, 6))
-plt.barh(X.columns[sort], xgb_model.feature_importances_[sort])
+plt.barh(X_train.columns[sort], xgb_model.feature_importances_[sort])
 plt.xlabel("Feature Importance")
 plt.title("XGBoost Feature Importance")
 plt.yticks(fontsize=5)
-plt.show()
+plt.savefig("figures/xgb_feature_importance.png")
