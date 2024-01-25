@@ -9,8 +9,8 @@ from sklearn.metrics import roc_auc_score
 import xgboost as xgb
 
 def objective(trial):
-    x = pd.read_csv("../data/X_train.csv", keep_default_na = False)
-    y = pd.read_csv("../data/y_train.csv", keep_default_na = False).values.ravel()
+    x = pd.read_csv("data/X_train.csv", keep_default_na = False)
+    y = pd.read_csv("data/y_train.csv", keep_default_na = False).values.ravel()
 
     learning_rate = trial.suggest_float("learning_rate", 0.01, 1)
     max_depth = trial.suggest_int("max_depth", 2, 35)

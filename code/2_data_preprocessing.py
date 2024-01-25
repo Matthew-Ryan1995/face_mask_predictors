@@ -1,5 +1,14 @@
 import pandas as pd
 
+def mandates_convert(row):
+    endtime = pd.to_datetime(row['endtime'], format='%Y-%m-%d')
+    state = row['state']
+
+    if states_date[state][0] <= endtime <= states_date[state][1]:
+        return 1
+    else:
+        return 0
+    
 cleaned_df = pd.read_csv("data/cleaned_data.csv", keep_default_na = False)
     
 # add in one column indicates whether it is within face mask mandates
@@ -9,22 +18,27 @@ for state, date_range in states_date.items():
     states_date[state] = [pd.to_datetime(date, format='%Y-%m-%d') for date in date_range]
 
 # Create a new column "period"
-cleaned_df['within_mandate_period'] = cleaned_df.index.map(lambda idx: idx if idx in cleaned_df.index else 0)
+cleaned_df['within_mandate_period'] = cleaned_df.apply(mandates_convert, axis=1)
 
-# Create dummy variables for 'state'
-state_dummies = pd.get_dummies(cleaned_df['state'], prefix='state', drop_first=True)
+# Create dummy variables with these with more than 2 answers
+d1_convert_into_dummy_cols = ['d1_health_1', 'd1_health_2', 'd1_health_3', 'd1_health_4', 'd1_health_5', 
+                           'd1_health_6','d1_health_7', 'd1_health_8', 'd1_health_9', 'd1_health_10',
+                           'd1_health_11', 'd1_health_12', 'd1_health_13', 'd1_health_98', 'd1_health_99',
+                           ]
+convert_into_dummy_cols = ['state', 'gender', 'i9_health', 'employment_status', 'i11_health','WCRex1', 'WCRex2', 'PHQ4_1', 'PHQ4_2', 'PHQ4_3', 'PHQ4_4',
+                           ]
 
-# Create dummy variables for 'gender'
-gender_dummies = pd.get_dummies(cleaned_df['gender'], prefix='gender', drop_first=True)
+for col in d1_convert_into_dummy_cols:
+    dummy = pd.get_dummies(cleaned_df[col], prefix=col, dummy_na=True, drop_first=True)
+    cleaned_df = pd.concat([cleaned_df, dummy], axis=1)
+    cleaned_df = cleaned_df.drop(col, axis=1)
 
-# Create dummy variables for 'employment_status'
-employment_status_dummies = pd.get_dummies(cleaned_df['employment_status'], prefix='employment_status', drop_first=True)
-
-# Concatenate the dummy variables with the original DataFrame
-cleaned_df = pd.concat([cleaned_df, state_dummies, gender_dummies, employment_status_dummies], axis=1)
-
-# Drop the original categorical columns
-cleaned_df = cleaned_df.drop(['state', 'gender', 'employment_status'], axis=1)
+for col in convert_into_dummy_cols:
+    dummy = pd.get_dummies(cleaned_df[col], prefix=col, drop_first=True)
+    cleaned_df = pd.concat([cleaned_df, dummy], axis=1)
+    cleaned_df = cleaned_df.drop(col, axis=1)
+cleaned_df = cleaned_df.drop("d1_health_atleastone", axis=1)
+cleaned_df = cleaned_df.drop("mental_health_binary", axis=1)
 
 # Store the updated DataFrame
 cleaned_df.to_csv("data/cleaned_data_preprocessing.csv", index=False)
