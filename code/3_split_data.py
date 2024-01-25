@@ -22,6 +22,8 @@ cleaned_df = pd.read_csv("data/cleaned_data_preprocessing.csv", keep_default_na 
 #     'employment_status_Part time employment', 'employment_status_Retired',
 #     'employment_status_Unemployed']
 feature_cols = cleaned_df.columns.drop(["RecordNo", "face_mask_behaviour_scale", "face_mask_behaviour_binary", "endtime"])
+for col in feature_cols:
+    print(col)
 
 # Label encoder
 label_encoder = LabelEncoder()

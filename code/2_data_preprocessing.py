@@ -25,18 +25,19 @@ d1_convert_into_dummy_cols = ['d1_health_1', 'd1_health_2', 'd1_health_3', 'd1_h
                            'd1_health_6','d1_health_7', 'd1_health_8', 'd1_health_9', 'd1_health_10',
                            'd1_health_11', 'd1_health_12', 'd1_health_13', 'd1_health_98', 'd1_health_99',
                            ]
-convert_into_dummy_cols = ['state', 'gender', 'i9_health', 'employment_status', 'i11_health','WCRex1', 'WCRex2', 'PHQ4_1', 'PHQ4_2', 'PHQ4_3', 'PHQ4_4',
+convert_into_dummy_cols = ['state','gender', 'i9_health', 'employment_status', 'i11_health','WCRex1', 'WCRex2', 'PHQ4_1', 'PHQ4_2', 'PHQ4_3', 'PHQ4_4',
                            ]
-
-for col in d1_convert_into_dummy_cols:
-    dummy = pd.get_dummies(cleaned_df[col], prefix=col, dummy_na=True, drop_first=True)
-    cleaned_df = pd.concat([cleaned_df, dummy], axis=1)
-    cleaned_df = cleaned_df.drop(col, axis=1)
 
 for col in convert_into_dummy_cols:
     dummy = pd.get_dummies(cleaned_df[col], prefix=col, drop_first=True)
     cleaned_df = pd.concat([cleaned_df, dummy], axis=1)
     cleaned_df = cleaned_df.drop(col, axis=1)
+    
+for col in d1_convert_into_dummy_cols:
+    dummy = pd.get_dummies(cleaned_df[col], prefix=col, dummy_na=True, drop_first=True)
+    cleaned_df = pd.concat([cleaned_df, dummy], axis=1)
+    cleaned_df = cleaned_df.drop(col, axis=1)
+
 cleaned_df = cleaned_df.drop("d1_health_atleastone", axis=1)
 cleaned_df = cleaned_df.drop("mental_health_binary", axis=1)
 
