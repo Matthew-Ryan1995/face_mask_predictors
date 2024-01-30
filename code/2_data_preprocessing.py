@@ -10,7 +10,7 @@ def mandates_convert(row):
         return 0
     
 cleaned_df = pd.read_csv("data/cleaned_data.csv", keep_default_na = False)
-    
+print(cleaned_df['d1_health_1'].value_counts())
 # add in one column indicates whether it is within face mask mandates
 states_date = {'Australian Capital Territory': ['2021-06-28', '2022-02-25'], 'New South Wales': ['2021-01-04', '2022-09-20'], 'Northern Territory': ['2021-12-19', '2022-03-05'], 'Queensland': ['2021-06-29', '2022-03-07'], 'South Australia': ['2021-07-27', '2022-09-20'], 'Tasmania': ['2021-12-21', '2022-03-05'], 'Victoria': ['2020-07-23', '2022-09-22'], 'Western Australia': ['2021-12-23', '2022-04-29']}
     
@@ -21,25 +21,15 @@ for state, date_range in states_date.items():
 cleaned_df['within_mandate_period'] = cleaned_df.apply(mandates_convert, axis=1)
 
 # Create dummy variables with these with more than 2 answers
-d1_convert_into_dummy_cols = ['d1_health_1', 'd1_health_2', 'd1_health_3', 'd1_health_4', 'd1_health_5', 
-                           'd1_health_6','d1_health_7', 'd1_health_8', 'd1_health_9', 'd1_health_10',
-                           'd1_health_11', 'd1_health_12', 'd1_health_13', 'd1_health_98', 'd1_health_99',
-                           ]
 convert_into_dummy_cols = ['state','gender', 'i9_health', 'employment_status', 'i11_health','WCRex1', 'WCRex2', 'PHQ4_1', 'PHQ4_2', 'PHQ4_3', 'PHQ4_4',
-                           ]
+                           'd1_health_1', 'd1_health_2', 'd1_health_3', 'd1_health_4', 'd1_health_5', 
+                           'd1_health_6','d1_health_7', 'd1_health_8', 'd1_health_9', 'd1_health_10',
+                           'd1_health_11', 'd1_health_12', 'd1_health_13', 'd1_health_98', 'd1_health_99']
 
 for col in convert_into_dummy_cols:
     dummy = pd.get_dummies(cleaned_df[col], prefix=col, drop_first=True)
     cleaned_df = pd.concat([cleaned_df, dummy], axis=1)
     cleaned_df = cleaned_df.drop(col, axis=1)
-    
-for col in d1_convert_into_dummy_cols:
-    dummy = pd.get_dummies(cleaned_df[col], prefix=col, dummy_na=True, drop_first=True)
-    cleaned_df = pd.concat([cleaned_df, dummy], axis=1)
-    cleaned_df = cleaned_df.drop(col, axis=1)
-
-cleaned_df = cleaned_df.drop("d1_health_atleastone", axis=1)
-cleaned_df = cleaned_df.drop("mental_health_binary", axis=1)
 
 # Store the updated DataFrame
 cleaned_df.to_csv("data/cleaned_data_preprocessing.csv", index=False)
