@@ -103,13 +103,11 @@ for column in df.columns:
 # for i in range(1, 5):
 #     df.loc[df[f"PHQ4_{i}"] == 0, f"PHQ4_{i}"] = "N/A"
 
-print(df["PHQ4_1"].value_counts())
-
 # Change: have a face mask variable to be target in model i12_health_[1,22,23,25]
 df["face_mask_behaviour_scale"] = df[["i12_health_1", "i12_health_22", "i12_health_23", "i12_health_25"]].median(axis = 1)
 df["face_mask_behaviour_binary"] = df["face_mask_behaviour_scale"].apply(lambda x: "Yes" if x >= 4 else "No")
-
 df = df.drop(["qweek", "weight", "i12_health_1", "i12_health_22", "i12_health_23", "i12_health_25"], axis = 1)
+
 # create a new column in the csv that computer from week 1 for every two weeks
 start_date = df['endtime'].min()
 end_date = df['endtime'].max()
@@ -123,5 +121,4 @@ df.dropna(inplace=True)
 
 # Save the cleaned DataFrame to a new CSV file
 # edit: fixed file path/save location
-print(df["d1_health_1"].value_counts())
 df.to_csv("data/cleaned_data.csv", index=False)
