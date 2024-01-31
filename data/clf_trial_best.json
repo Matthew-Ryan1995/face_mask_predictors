@@ -1,0 +1,1 @@
+{"number": 92, "value": 0.8039697624603876, "params": {"max_depth": 6, "min_samples_split": 17, "min_samples_leaf": 3, "min_weight_fraction_leaf": 0.010394450468474498, "criterion": "entropy", "splitter": "random", "min_impurity_decrease": 0.0005214033681798826, "class_weight": "balanced"}, "user_attrs": {}}
