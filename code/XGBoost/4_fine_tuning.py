@@ -8,12 +8,12 @@ from sklearn.metrics import roc_auc_score
 import xgboost as xgb
 
 def objective(trial):
-    x = pd.read_csv("data/X_train.csv", keep_default_na = False)
-    y = pd.read_csv("data/y_train.csv", keep_default_na = False).values.ravel()
+    x = pd.read_csv("../data/X_train.csv", keep_default_na = False)
+    y = pd.read_csv("../data/y_train.csv", keep_default_na = False).values.ravel()
 
-    learning_rate = trial.suggest_float("learning_rate", 0.01, 1)
+    # learning_rate = trial.suggest_float("learning_rate", 0.01, 1)
     # max_depth = trial.suggest_int("max_depth", 2, 35)
-    min_child_weight = trial.suggest_int("min_child_weight", 1, 10) # 1- imbalance
+    # min_child_weight = trial.suggest_int("min_child_weight", 1, 10) # 1- imbalance
     # subsample = trial.suggest_int("subsample", 0.1, 1)
 
     # colsample_bytree = trial.suggest_int("colsample_bytree", 0.5, 0.9)
@@ -23,9 +23,9 @@ def objective(trial):
     # reg_lambda = trial.suggest_float("lambda", 0.0, 2.0)
 
     xgb_model = xgb.XGBClassifier(
-                            learning_rate=learning_rate,
+                            # learning_rate=learning_rate,
                             # max_depth=max_depth,
-                            min_child_weight=min_child_weight,
+                            # min_child_weight=min_child_weight,
                             # subsample=subsample,
                             # colsample_bytree=colsample_bytree,
                             scale_pos_weight=scale_pos_weight,

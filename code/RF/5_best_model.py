@@ -1,11 +1,11 @@
 import json
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score, KFold
 from sklearn.metrics import roc_auc_score, roc_curve, auc
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
 
 # Read in json file with highest value
 f = open('data/rf_trial_best.json', 'r')
@@ -28,6 +28,15 @@ rf = RandomForestClassifier(
                             min_samples_leaf = param_values[2]
                             )
 
+X_test = pd.read_csv("data/X_test.csv", keep_default_na = False)
+y_test = pd.read_csv("data/y_test.csv", keep_default_na = False).values.ravel()
+rf.fit(X_train, y_train)
+y_pred_rf = rf.predict(X_test)
+
+#  Confusion matrix
+confusion_matrix = confusion_matrix(y_test, y_pred_rf)
+print(f"The confusion matrix is {confusion_matrix}")
+
 # Print the accuracy scores for 10-folder cross validation
 kf = KFold(n_splits=10)
 score = cross_val_score(rf, X_train, y_train, cv=kf, scoring='accuracy')
@@ -35,11 +44,6 @@ print("Cross-validation scores:", score)
 print("Mean accuracy:", score.mean())
 
 # print cross validation ROC curve
-X_test = pd.read_csv("data/X_test.csv", keep_default_na = False)
-y_test = pd.read_csv("data/y_test.csv", keep_default_na = False).values.ravel()
-rf.fit(X_train, y_train)
-y_pred_rf = rf.predict(X_test)
-
 # Split dataset into training set and test set
 y_pred_proba = rf.predict_proba(X_test)[:, 1]
 print(f"roc score: {roc_auc_score(y_test, y_pred_proba)}")
