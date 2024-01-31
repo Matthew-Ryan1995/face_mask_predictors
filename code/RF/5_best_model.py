@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
 # Read in json file with highest value
-f = open('data/rf_trial_best.json', 'r')
+f = open('../data/rf_trial_best.json', 'r')
 obj = json.loads(f.read())
 
 # create parameters variables
@@ -18,18 +18,17 @@ for parm in obj['params']:
 
 f.close()
 
-X_train = pd.read_csv("data/X_train.csv", keep_default_na = False)
-y_train = pd.read_csv("data/y_train.csv", keep_default_na = False).values.ravel()
+X_train = pd.read_csv("../data/X_train.csv", keep_default_na = False)
+y_train = pd.read_csv("../data/y_train.csv", keep_default_na = False).values.ravel()
 
 rf = RandomForestClassifier(
                             n_estimators=1000,
-                            max_depth= param_values[0],
-                            min_samples_split =param_values[1],
-                            min_samples_leaf = param_values[2]
+                            ccp_alpha= param_values[0],
+                            min_impurity_decrease =param_values[1]
                             )
 
-X_test = pd.read_csv("data/X_test.csv", keep_default_na = False)
-y_test = pd.read_csv("data/y_test.csv", keep_default_na = False).values.ravel()
+X_test = pd.read_csv("../data/X_test.csv", keep_default_na = False)
+y_test = pd.read_csv("../data/y_test.csv", keep_default_na = False).values.ravel()
 rf.fit(X_train, y_train)
 y_pred_rf = rf.predict(X_test)
 
@@ -62,7 +61,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Receiver Operating Characteristic (ROC) Curve')
 plt.legend(loc='lower right')
-plt.savefig("figures/rf_roc_curve.png")
+plt.savefig("../figures/rf_roc_curve.png")
 
 # Explore the feature importance
 sort = rf.feature_importances_.argsort()
@@ -70,5 +69,5 @@ plt.figure(figsize=(10, 6))
 plt.barh(X_train.columns[sort], rf.feature_importances_[sort])
 plt.xlabel("Feature Importance")
 plt.title("Random Forest Feature Importance")
-plt.yticks(fontsize=5)
-plt.savefig("figures/rf_feature_importance.png")
+plt.yticks(fontsize=6, rotation=45)
+plt.savefig("../figures/rf_feature_importance.png")
