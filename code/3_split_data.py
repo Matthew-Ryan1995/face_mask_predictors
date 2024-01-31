@@ -42,3 +42,5 @@ X_train.to_csv("data/X_train.csv", index=False)
 X_test.to_csv("data/X_test.csv", index=False)
 pd.DataFrame({'y_train': y_train}).to_csv("data/y_train.csv", index=False)
 pd.DataFrame({'y_test': y_test}).to_csv("data/y_test.csv", index=False)
+
+print(X_train['within_mandate_period'].value_counts())
