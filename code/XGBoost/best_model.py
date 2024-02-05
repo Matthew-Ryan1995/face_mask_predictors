@@ -47,7 +47,7 @@ confusion_matrix = confusion_matrix(y_test, y_pred_xgb)
 print(f"The confusion matrix is {confusion_matrix}")
 
 # Print the accuracy scores for 10-folder cross validation
-kf = KFold(n_splits=10)
+kf = KFold(n_splits=5)
 score = cross_val_score(xgb_model, X_train, y_train, cv=kf, scoring='accuracy')
 print("Cross-validation scores:", score)
 print("Mean accuracy:", score.mean())
