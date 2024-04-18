@@ -1,0 +1,1 @@
+{"number": 241, "value": 0.8931668115075182, "params": {"max_depth": 18, "min_samples_split": 8, "min_weight_fraction_leaf": 0.0014375043052021978, "criterion": "entropy", "min_impurity_decrease": 0.00028335063124866383}, "user_attrs": {"std_err": 0.0016717285936127867}}
