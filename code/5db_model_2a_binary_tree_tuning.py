@@ -20,6 +20,9 @@ from sklearn.model_selection import cross_validate, KFold
 from sklearn.tree import DecisionTreeClassifier
 from datetime import datetime
 import json
+from imblearn.over_sampling import RandomOverSampler
+from sklearn.metrics import roc_auc_score
+import numpy as np
 
 
 # %% Function definitions
@@ -29,7 +32,7 @@ def objective(trial):
         # 'max_depth': trial.suggest_int('max_depth', 1, 20),
         # 'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
         # 'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
-        'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5),
+        # 'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5),
         # 'criterion': trial.suggest_categorical('criterion', ['gini', 'entropy']),
         # 'splitter': trial.suggest_categorical('splitter', ['best', 'random']),
         'min_impurity_decrease': trial.suggest_float('min_impurity_decrease', 0.0, 0.2),
@@ -41,11 +44,41 @@ def objective(trial):
 
     number_folds = 5
     kf = KFold(n_splits=number_folds)
-    score = cross_validate(clf, x, y, cv=kf, scoring=["roc_auc"])
-    roc = score["test_roc_auc"].mean()
+
+    cv_scores = {
+        "fold": [],
+        'test_roc_auc': [],
+    }
+
+    splits = list(kf.split(x))
+
+    for fold in range(len(splits)):
+        cv_scores["fold"].append(fold)
+        train_idx = splits[fold][0]
+        val_idx = splits[fold][1]
+
+        X_train = x.iloc[train_idx]
+        y_train = y[train_idx]
+
+        X_val = x.iloc[val_idx]
+        y_val = y[val_idx]
+
+        upsampler = RandomOverSampler()  # No seed set on purpose
+
+        X_train_upsample, y_train_upsample = upsampler.fit_resample(
+            X_train, y_train)
+
+        clf_fitted = clf.fit(X_train_upsample, y_train_upsample)
+
+        prop_preds = clf_fitted.predict_proba(X_val)
+
+        cv_scores["test_roc_auc"].append(roc_auc_score(
+            y_true=y_val, y_score=prop_preds[:, 1]))
+    cv_scores["test_roc_auc"] = np.array(cv_scores["test_roc_auc"])
+    roc = cv_scores["test_roc_auc"].mean()
 
     trial.set_user_attr("std_err",
-                        np.std(score["test_roc_auc"])/np.sqrt(number_folds))
+                        np.std(cv_scores["test_roc_auc"])/np.sqrt(number_folds))
 
     return roc
 

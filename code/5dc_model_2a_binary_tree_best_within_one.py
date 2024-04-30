@@ -49,7 +49,6 @@ best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 
 # Order chosen based on hyperparamter importance
 sort_params = ["min_impurity_decrease",
-               "min_weight_fraction_leaf",
                ]
 
 ans = best_shots.sort_values(sort_params).iloc[0]

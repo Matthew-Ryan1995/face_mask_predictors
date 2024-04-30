@@ -26,6 +26,8 @@ from sklearn.model_selection import KFold, cross_validate
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 import pickle
+from imblearn.over_sampling import RandomOverSampler
+from sklearn.metrics import precision_score, recall_score, roc_auc_score, accuracy_score, f1_score
 
 # %% Parameter set up
 
@@ -39,7 +41,7 @@ metric_list = ['precision', "recall", "roc_auc", "accuracy", "f1"]
 # %%
 
 
-def cross_validate_model(model_number):
+def cross_validate_model(model_number, upsample=False):
     # Load data
     x = pd.read_csv(
         f"../data/X_train_{model_number}.csv", keep_default_na=False)
@@ -47,7 +49,56 @@ def cross_validate_model(model_number):
                     keep_default_na=False).values.ravel()
 
     # Cross validate model
-    cv_scores = cross_validate(logreg, x, y, cv=kf, scoring=metric_list)
+    if upsample:
+        cv_scores = {
+            "fold": [],
+            'test_precision': [],
+            'test_recall': [],
+            'test_roc_auc': [],
+            'test_accuracy': [],
+            'test_f1': []
+        }
+
+        splits = list(kf.split(x))
+
+        for fold in range(len(splits)):
+            cv_scores["fold"].append(fold)
+            train_idx = splits[fold][0]
+            val_idx = splits[fold][1]
+
+            X_train = x.iloc[train_idx]
+            y_train = y[train_idx]
+
+            X_val = x.iloc[val_idx]
+            y_val = y[val_idx]
+
+            upsampler = RandomOverSampler()  # No seed set on purpose
+
+            X_train_upsample, y_train_upsample = upsampler.fit_resample(
+                X_train, y_train)
+
+            clf = logreg.fit(X_train_upsample, y_train_upsample)
+
+            preds = clf.predict(X_val)
+            prop_preds = clf.predict_proba(X_val)
+
+            cv_scores["test_precision"].append(
+                precision_score(y_true=y_val, y_pred=preds))
+            cv_scores["test_recall"].append(
+                recall_score(y_true=y_val, y_pred=preds))
+            cv_scores["test_roc_auc"].append(roc_auc_score(
+                y_true=y_val, y_score=prop_preds[:, 1]))
+            cv_scores["test_accuracy"].append(
+                accuracy_score(y_true=y_val, y_pred=preds))
+            cv_scores["test_f1"].append(f1_score(y_true=y_val, y_pred=preds))
+
+        cv_scores["test_precision"] = np.array(cv_scores["test_precision"])
+        cv_scores["test_recall"] = np.array(cv_scores["test_recall"])
+        cv_scores["test_roc_auc"] = np.array(cv_scores["test_roc_auc"])
+        cv_scores["test_accuracy"] = np.array(cv_scores["test_accuracy"])
+        cv_scores["test_f1"] = np.array(cv_scores["test_f1"])
+    else:
+        cv_scores = cross_validate(logreg, x, y, cv=kf, scoring=metric_list)
 
     # Print the accuracy scores for each fold
 
@@ -74,7 +125,7 @@ cross_validate_model(model_number)
 
 model_number = "model_1a"
 
-cross_validate_model(model_number)
+cross_validate_model(model_number, upsample=True)
 
 # %% Model 2:
 
@@ -86,7 +137,7 @@ cross_validate_model(model_number)
 
 model_number = "model_2a"
 
-cross_validate_model(model_number)
+cross_validate_model(model_number, upsample=True)
 
 # %%
 # How to load

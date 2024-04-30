@@ -7,7 +7,6 @@ Find important hyperparameters for optimizing roc_auc for model 2.
 
 Findings: Consistently find that
     - min_imputiry_decrease
-    - min_weight_fraction_leaf
 All useful for model fitting.  Tune these.
 
 TODO: Upsampling
@@ -20,6 +19,9 @@ import pandas as pd
 from sklearn.model_selection import cross_validate, KFold
 from sklearn.tree import DecisionTreeClassifier
 from datetime import datetime
+from imblearn.over_sampling import RandomOverSampler
+from sklearn.metrics import roc_auc_score
+import numpy as np
 
 
 # %% Function definitions
@@ -39,6 +41,36 @@ def objective(trial):
     # Create the DecisionTreeClassifier with suggested parameters
     clf = DecisionTreeClassifier(**param_ranges)
     kf = KFold(n_splits=5)
+
+    cv_scores = {
+        "fold": [],
+        'test_roc_auc': [],
+    }
+
+    splits = list(kf.split(x))
+
+    for fold in range(len(splits)):
+        cv_scores["fold"].append(fold)
+        train_idx = splits[fold][0]
+        val_idx = splits[fold][1]
+
+        X_train = x.iloc[train_idx]
+        y_train = y[train_idx]
+
+        X_val = x.iloc[val_idx]
+        y_val = y[val_idx]
+
+        upsampler = RandomOverSampler()  # No seed set on purpose
+
+        X_train_upsample, y_train_upsample = upsampler.fit_resample(
+            X_train, y_train)
+
+        clf_fitted = clf.fit(X_train_upsample, y_train_upsample)
+
+        prop_preds = clf_fitted.predict_proba(X_val)
+
+        cv_scores["test_roc_auc"].append(roc_auc_score(
+            y_true=y_val, y_score=prop_preds[:, 1]))
     score = cross_validate(clf, x, y, cv=kf, scoring=["roc_auc"])
     roc = score["test_roc_auc"].mean()
     return roc

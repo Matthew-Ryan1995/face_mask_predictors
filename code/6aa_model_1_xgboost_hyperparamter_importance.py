@@ -6,8 +6,10 @@ Created on Thu Apr 18 11:49:45 2024
 Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
-    - msubsample is the heavy hitter
-All useful for model fitting.  Tune these.
+    - lambda
+    - learning rate
+    - subsample
+    - colsample_by_tree
 
 ### 230 seems best estimators.  Fix at 250
 
@@ -25,16 +27,17 @@ from datetime import datetime
 def objective(trial):
     # Define parameter ranges
     learning_rate = trial.suggest_float("learning_rate", 0.01, 1)
-    max_depth = trial.suggest_int("max_depth", 2, 35)
+    max_depth = trial.suggest_int("max_depth", 2, 10)
     min_child_weight = trial.suggest_int("min_child_weight", 1, 10)
     subsample = trial.suggest_float("subsample", 0.1, 1)
 
     colsample_bytree = trial.suggest_float("colsample_bytree", 0.5, 0.9)
-    scale_pos_weight = trial.suggest_int("scale_pos_weight", 1, 10)
-    gamma = trial.suggest_float("gamma", 0, 5)
-    alpha = trial.suggest_float("alpha", 0.0, 2.0)
-    reg_lambda = trial.suggest_float("lambda", 0.0, 2.0)
-    n_estimator = trial.suggest_int("n_estimator", 100, 500)
+    # scale_pos_weight = trial.suggest_int("scale_pos_weight", 1, 10)
+    scale_pos_weight = sum(1-y)/sum(y)
+    gamma = trial.suggest_float("gamma", 1e-8, 1.0, log=True)
+    # alpha = trial.suggest_float("alpha", 0.0, 2.0)
+    reg_lambda = trial.suggest_float("lambda", 1e-8, 1.0, log=True)
+    # n_estimator = trial.suggest_int("n_estimator", 100, 500)
 
     clf = xgb.XGBClassifier(
         learning_rate=learning_rate,
@@ -44,9 +47,9 @@ def objective(trial):
         colsample_bytree=colsample_bytree,
         scale_pos_weight=scale_pos_weight,
         gamma=gamma,
-        alpha=alpha,
+        # alpha=alpha,
         reg_lambda=reg_lambda,
-        n_estimators=n_estimator,
+        n_estimators=250,
         objective="binary:logistic",
     )
     kf = KFold(n_splits=5)
@@ -69,7 +72,7 @@ if __name__ == "__main__":
     # Run limited number of trails to see which are effecting results most
     study = optuna.create_study(directions=["maximize"],
                                 sampler=optuna.samplers.TPESampler(seed=1985))
-    study.optimize(objective, n_trials=250, n_jobs=-1)
+    study.optimize(objective, n_trials=50, n_jobs=-1)
     fig = optuna.visualization.plot_param_importances(study)
     fig.show()
     fig.write_image(
