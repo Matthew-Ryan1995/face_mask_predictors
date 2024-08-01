@@ -1,1 +1,1 @@
-{"number": 694, "value": 0.8350164558699923, "params": {"max_depth": 32, "min_samples_leaf": 1}, "user_attrs": {"std_err": 0.0023906976241566}}
+{"number": 200, "value": 0.8357744718549563, "params": {"max_depth": 23, "min_samples_leaf": 1}, "user_attrs": {"std_err": 0.002094264110690177}}

@@ -7,6 +7,9 @@ Find important hyperparameters for optimizing roc_auc for model 2.
 
 Findings: Consistently find that
     - min_imputiry_decrease
+    - min_weight_fraction_leaf
+    - splitter
+    - min_samples_leaf
 All useful for model fitting.  Tune these.
 
 TODO: Upsampling
@@ -16,7 +19,7 @@ TODO: Upsampling
 # %% Packages
 import optuna
 import pandas as pd
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 from sklearn.tree import DecisionTreeClassifier
 from datetime import datetime
 from imblearn.over_sampling import RandomOverSampler
@@ -40,14 +43,18 @@ def objective(trial):
 
     # Create the DecisionTreeClassifier with suggested parameters
     clf = DecisionTreeClassifier(**param_ranges)
-    kf = KFold(n_splits=5)
+    n_splits = 5
+    seed = 20240627
+    kf = StratifiedShuffleSplit(n_splits=n_splits,
+                                test_size=1/n_splits,
+                                random_state=seed)
 
     cv_scores = {
         "fold": [],
         'test_roc_auc': [],
     }
 
-    splits = list(kf.split(x))
+    splits = list(kf.split(x, y))
 
     for fold in range(len(splits)):
         cv_scores["fold"].append(fold)

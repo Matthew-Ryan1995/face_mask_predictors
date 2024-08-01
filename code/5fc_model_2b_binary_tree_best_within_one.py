@@ -3,12 +3,6 @@
 """
 Created on Thu Apr 18 14:12:16 2024
 
-Findings: Consistently find that
-    - max_features
-    - min_sample_leafs
-    - max_depth
-    - min_samples_split
-
 @author: rya200
 """
 
@@ -19,8 +13,8 @@ import pandas as pd
 
 # %% Parameter set up
 
-model_number = "model_1a"
-model_type = "rf"
+model_number = "model_2b"
+model_type = "binary_tree"
 
 # %% Read data
 
@@ -54,12 +48,9 @@ within_one_std_err = best["value"] - best["user_attrs"]["std_err"]
 best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 
 # Order chosen based on hyperparamter importance
-sort_params = [
-    "max_features",
-    "min_samples_leaf",
-    "max_depth",
-    "min_samples_split"
-]
+sort_params = ["min_impurity_decrease",
+               # "min_weight_fraction_leaf",
+               ]
 
 ans = best_shots.sort_values(sort_params).iloc[0]
 

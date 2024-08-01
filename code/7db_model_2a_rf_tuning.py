@@ -19,7 +19,7 @@ Findings: Consistently find that
 # %% Packages
 import optuna
 import pandas as pd
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
 import json
@@ -61,13 +61,17 @@ def objective(trial):
     )
 
     number_folds = 5
-    kf = KFold(n_splits=number_folds)
+    n_splits = 5
+    seed = 20240627
+    kf = StratifiedShuffleSplit(n_splits=n_splits,
+                                test_size=1/n_splits,
+                                random_state=seed)
     cv_scores = {
         "fold": [],
         'test_roc_auc': [],
     }
 
-    splits = list(kf.split(x))
+    splits = list(kf.split(x, y))
 
     for fold in range(len(splits)):
         cv_scores["fold"].append(fold)

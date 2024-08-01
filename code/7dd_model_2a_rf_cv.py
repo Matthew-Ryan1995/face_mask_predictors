@@ -17,7 +17,7 @@ Date created:
 import json
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 import pickle
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.metrics import precision_score, recall_score, roc_auc_score, accuracy_score, f1_score
@@ -45,7 +45,11 @@ params["min_samples_split"] = int(params["min_samples_split"])
 
 # %%
 
-kf = KFold(n_splits=5)
+n_splits = 5
+seed = 20240627
+kf = StratifiedShuffleSplit(n_splits=n_splits,
+                            test_size=1/n_splits,
+                            random_state=seed)
 
 metric_list = ['precision', "recall", "roc_auc", "accuracy", "f1"]
 
@@ -74,7 +78,7 @@ def cross_validate_model(model_number):
         'test_f1': []
     }
 
-    splits = list(kf.split(x))
+    splits = list(kf.split(x, y))
 
     for fold in range(len(splits)):
         cv_scores["fold"].append(fold)

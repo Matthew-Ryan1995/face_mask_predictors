@@ -17,7 +17,7 @@ Date created:
 import json
 import pandas as pd
 import xgboost as xgb
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 import pickle
 
 # %%
@@ -34,14 +34,18 @@ del params["number"]
 del params["value"]
 del params["std_err"]
 
-params["max_depth"] = int(params["max_depth"])
+# params["max_depth"] = int(params["max_depth"])
 
 params["n_estimators"] = 250
 
 
 # %%
 
-kf = KFold(n_splits=5)
+n_splits = 5
+seed = 20240627
+kf = StratifiedShuffleSplit(n_splits=n_splits,
+                            test_size=1/n_splits,
+                            random_state=seed)
 
 metric_list = ['precision', "recall", "roc_auc", "accuracy", "f1"]
 

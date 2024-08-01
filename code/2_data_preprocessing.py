@@ -46,9 +46,11 @@ cleaned_df['within_mandate_period'] = cleaned_df.apply(
 # Create dummy variables with these with more than 2 answers
 convert_into_dummy_cols = ['state', 'gender', 'i9_health', 'employment_status', 'i11_health',
                            'WCRex1', 'WCRex2', 'PHQ4_1', 'PHQ4_2', 'PHQ4_3', 'PHQ4_4',
-                           'd1_health_1', 'd1_health_2', 'd1_health_3', 'd1_health_4', 'd1_health_5',
-                           'd1_health_6', 'd1_health_7', 'd1_health_8', 'd1_health_9', 'd1_health_10',
-                           'd1_health_11', 'd1_health_12', 'd1_health_13', 'd1_health_98', 'd1_health_99']
+                           "d1_comorbidities"
+                           # 'd1_health_1', 'd1_health_2', 'd1_health_3', 'd1_health_4', 'd1_health_5',
+                           # 'd1_health_6', 'd1_health_7', 'd1_health_8', 'd1_health_9', 'd1_health_10',
+                           # 'd1_health_11', 'd1_health_12', 'd1_health_13', 'd1_health_98', 'd1_health_99'
+                           ]
 
 for col in convert_into_dummy_cols:
     dummy = pd.get_dummies(cleaned_df[col], prefix=col, drop_first=True)

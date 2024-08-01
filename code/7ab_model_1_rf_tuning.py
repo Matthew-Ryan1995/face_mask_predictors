@@ -7,8 +7,10 @@ Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
 - Optimal values at ccp_alpha=min_impurity=0
-- Most influential setting these to 0 are max_depth and max_features
-- To a lower extent, min_samples_leaf
+- max_depth
+- max_features
+- min_samples_leaf
+
 
 ### 230 seems best estimators.  Fix at 250
 
@@ -17,7 +19,7 @@ Findings: Consistently find that
 # %% Packages
 import optuna
 import pandas as pd
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
 import json
@@ -55,7 +57,12 @@ def objective(trial):
         # class_weight=class_weight
     )
     number_folds = 5
-    kf = KFold(n_splits=number_folds)
+    n_splits = 5
+    seed = 20240627
+    kf = StratifiedShuffleSplit(n_splits=n_splits,
+                                test_size=1/n_splits,
+                                random_state=seed)
+    score = cross_validate(clf, x, y, cv=kf, scoring=["roc_auc"])
     score = cross_validate(clf, x, y, cv=kf, scoring=["roc_auc"])
     roc = score["test_roc_auc"].mean()
 

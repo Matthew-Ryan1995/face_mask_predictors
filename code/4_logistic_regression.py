@@ -22,7 +22,7 @@ Date created:
 '''
 # %% Packages
 import pandas as pd
-from sklearn.model_selection import KFold, cross_validate
+from sklearn.model_selection import KFold, cross_validate, StratifiedShuffleSplit
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 import pickle
@@ -33,7 +33,12 @@ from sklearn.metrics import precision_score, recall_score, roc_auc_score, accura
 
 # initiate the model
 logreg = LogisticRegression(max_iter=5000)
-kf = KFold(n_splits=5)
+# kf = KFold(n_splits=5)
+n_splits = 5
+seed = 20240627
+kf = StratifiedShuffleSplit(n_splits=n_splits,
+                            test_size=1/n_splits,
+                            random_state=seed)
 
 model_fitting = "logistic_reg"
 metric_list = ['precision', "recall", "roc_auc", "accuracy", "f1"]
@@ -59,7 +64,7 @@ def cross_validate_model(model_number, upsample=False):
             'test_f1': []
         }
 
-        splits = list(kf.split(x))
+        splits = list(kf.split(x, y))
 
         for fold in range(len(splits)):
             cv_scores["fold"].append(fold)
@@ -127,6 +132,12 @@ model_number = "model_1a"
 
 cross_validate_model(model_number, upsample=True)
 
+# %% Model 1b:
+
+model_number = "model_1b"
+
+cross_validate_model(model_number, upsample=True)
+
 # %% Model 2:
 
 model_number = "model_2"
@@ -139,7 +150,8 @@ model_number = "model_2a"
 
 cross_validate_model(model_number, upsample=True)
 
-# %%
-# How to load
-# with open("../results/model_1a_logistic_reg.pkl", "rb") as f:
-#     tmp = pickle.load(f)
+# %% Model 2b:
+
+model_number = "model_2b"
+
+cross_validate_model(model_number, upsample=True)

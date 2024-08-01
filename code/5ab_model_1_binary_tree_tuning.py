@@ -19,7 +19,7 @@ All useful for model fitting.  Tune these.
 import optuna
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 from sklearn.tree import DecisionTreeClassifier
 from datetime import datetime
 import json
@@ -43,7 +43,11 @@ def objective(trial):
     clf = DecisionTreeClassifier(**param_ranges)
 
     number_folds = 5
-    kf = KFold(n_splits=number_folds)
+    n_splits = 5
+    seed = 20240627
+    kf = StratifiedShuffleSplit(n_splits=n_splits,
+                                test_size=1/n_splits,
+                                random_state=seed)
     score = cross_validate(clf, x, y, cv=kf, scoring=["roc_auc"])
     roc = score["test_roc_auc"].mean()
 

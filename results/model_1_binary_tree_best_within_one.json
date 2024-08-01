@@ -1,1 +1,1 @@
-{"number": "224", "value": 0.8922472797045264, "max_depth": "19", "min_samples_split": "11", "min_weight_fraction_leaf": 0.0019516658763992015, "criterion": "entropy", "min_impurity_decrease": 1.626642199032411e-05, "std_err": 0.001719845481480512}
+{"number": "390", "value": 0.894741616359995, "max_depth": "16", "min_samples_split": "6", "min_weight_fraction_leaf": 0.0019495161314644143, "criterion": "gini", "min_impurity_decrease": 4.999696359966883e-05, "std_err": 0.0013964558359526712}

@@ -6,8 +6,8 @@ Created on Thu Apr 18 11:49:45 2024
 Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
-    - min smaples
-    - max depth
+    - max_depth
+    - min_sample_leaf
 
 ### 230 seems best estimators.  Fix at 250
 
@@ -16,7 +16,7 @@ Findings: Consistently find that
 # %% Packages
 import optuna
 import pandas as pd
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
 
@@ -53,7 +53,12 @@ def objective(trial):
         class_weight=class_weight
     )
 
-    kf = KFold(n_splits=5)
+    n_splits = 5
+    seed = 20240627
+    kf = StratifiedShuffleSplit(n_splits=n_splits,
+                                test_size=1/n_splits,
+                                random_state=seed)
+    score = cross_validate(clf, x, y, cv=kf, scoring=["roc_auc"])
     score = cross_validate(clf, x, y, cv=kf, scoring=["roc_auc"])
     roc = score["test_roc_auc"].mean()
     return roc

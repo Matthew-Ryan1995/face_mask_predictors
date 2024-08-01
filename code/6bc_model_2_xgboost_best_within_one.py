@@ -53,10 +53,10 @@ within_one_std_err = best["value"] - best["user_attrs"]["std_err"]
 best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 
 # Order chosen based on hyperparamter importance
-sort_params = ["max_depth",
-               "learning_rate",
-               "subsample",
-               ]
+sort_params = [
+    "learning_rate",
+    "subsample",
+]
 
 ans = best_shots.sort_values(sort_params).iloc[0]
 

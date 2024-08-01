@@ -1,1 +1,1 @@
-{"number": "174", "value": 0.8291772966294619, "max_depth": "26", "min_samples_split": "4", "min_samples_leaf": "1", "max_features": "log2", "std_err": 0.010578594331262136}
+{"number": "339", "value": 0.8419984744469872, "max_depth": "19", "min_samples_split": "15", "min_samples_leaf": "1", "max_features": "log2", "std_err": 0.013156519014075467}

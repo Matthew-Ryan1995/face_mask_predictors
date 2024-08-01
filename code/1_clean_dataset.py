@@ -102,6 +102,17 @@ protective_behaviour_nomask_cols = [col for col in protective_behaviour_cols if 
 df["protective_behaviour_nomask_scale"] = df[protective_behaviour_nomask_cols].median(
     axis=1)
 
+# Comorbidities: D1 Health
+# Combine comorbidities into "Yes", "No, "NA", "Prefer not to say"
+d1_cols = [col for col in df if col.startswith("d1_")]
+
+df["d1_comorbidities"] = "Yes"
+df.loc[df["d1_health_99"] == "Yes", "d1_comorbidities"] = "No"
+df.loc[df["d1_health_99"] == "N/A", "d1_comorbidities"] = "NA"
+df.loc[df["d1_health_98"] == "Yes", "d1_comorbidities"] = "Prefer_not_to_say"
+
+df = df.drop(d1_cols, axis=1)
+
 
 # Week variable in original data changes definition, so make our own.
 # create a new column in the csv that computer from week 1 for every two weeks

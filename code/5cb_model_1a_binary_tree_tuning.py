@@ -7,7 +7,6 @@ Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
     - min_imputiry_decrease
-    - min_weight_fraction_leaf
 All useful for model fitting.  Tune these.
 
 @author: rya200
@@ -16,7 +15,7 @@ All useful for model fitting.  Tune these.
 import optuna
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 from sklearn.tree import DecisionTreeClassifier
 from datetime import datetime
 import json
@@ -31,7 +30,7 @@ def objective(trial):
         # 'max_depth': trial.suggest_int('max_depth', 1, 20),
         # 'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
         # 'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
-        'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5),
+        # 'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5),
         # 'criterion': trial.suggest_categorical('criterion', ['gini', 'entropy']),
         # 'splitter': trial.suggest_categorical('splitter', ['best', 'random']),
         'min_impurity_decrease': trial.suggest_float('min_impurity_decrease', 0.0, 0.2),
@@ -42,13 +41,17 @@ def objective(trial):
     clf = DecisionTreeClassifier(**param_ranges)
 
     number_folds = 5
-    kf = KFold(n_splits=number_folds)
+    n_splits = 5
+    seed = 20240627
+    kf = StratifiedShuffleSplit(n_splits=n_splits,
+                                test_size=1/n_splits,
+                                random_state=seed)
     cv_scores = {
         "fold": [],
         'test_roc_auc': [],
     }
 
-    splits = list(kf.split(x))
+    splits = list(kf.split(x, y))
 
     for fold in range(len(splits)):
         cv_scores["fold"].append(fold)

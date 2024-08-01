@@ -6,7 +6,6 @@ Created on Thu Apr 18 11:49:45 2024
 Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
-    - Max depth
     - Learning rate
     - Subsample
 
@@ -17,7 +16,7 @@ Findings: Consistently find that
 # %% Packages
 import optuna
 import pandas as pd
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 import xgboost as xgb
 from datetime import datetime
 import json
@@ -28,7 +27,7 @@ import numpy as np
 def objective(trial):
     # Define parameter ranges
     learning_rate = trial.suggest_float("learning_rate", 0.01, 1)
-    max_depth = trial.suggest_int("max_depth", 2, 10)
+    # max_depth = trial.suggest_int("max_depth", 2, 10)
     # min_child_weight = trial.suggest_int("min_child_weight", 1, 10)
     subsample = trial.suggest_float("subsample", 0.1, 1)
 
@@ -43,13 +42,17 @@ def objective(trial):
     clf = xgb.XGBClassifier(
         learning_rate=learning_rate,
         subsample=subsample,
-        max_depth=max_depth,
+        # max_depth=max_depth,
         scale_pos_weight=scale_pos_weight,
         n_estimators=250,
         objective="binary:logistic",
     )
     number_folds = 5
-    kf = KFold(n_splits=number_folds)
+    n_splits = 5
+    seed = 20240627
+    kf = StratifiedShuffleSplit(n_splits=n_splits,
+                                test_size=1/n_splits,
+                                random_state=seed)
     score = cross_validate(clf, x, y, cv=kf, scoring=["roc_auc"])
     roc = score["test_roc_auc"].mean()
 

@@ -16,8 +16,8 @@ Date created:
 # %% Packages
 import json
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 import pickle
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.metrics import precision_score, recall_score, roc_auc_score, accuracy_score, f1_score
@@ -25,8 +25,8 @@ import numpy as np
 
 # %%
 
-model_number = "model_1a"
-model_type = "rf"
+model_number = "model_2b"
+model_type = "binary_tree"
 
 
 with open(f'../results/{model_number}_{model_type}_best_within_one.json', 'r') as f:
@@ -38,18 +38,17 @@ del params["value"]
 del params["std_err"]
 
 
-params["n_estimators"] = 250
-params["max_depth"] = int(params["max_depth"])
-params["min_samples_leaf"] = int(params["min_samples_leaf"])
-params["min_samples_split"] = int(params["min_samples_split"])
-
 # %%
 
-kf = KFold(n_splits=5)
+n_splits = 5
+seed = 20240627
+kf = StratifiedShuffleSplit(n_splits=n_splits,
+                            test_size=1/n_splits,
+                            random_state=seed)
 
 metric_list = ['precision', "recall", "roc_auc", "accuracy", "f1"]
 
-model = RandomForestClassifier(
+model = DecisionTreeClassifier(
     **params
 )
 
@@ -74,7 +73,7 @@ def cross_validate_model(model_number):
         'test_f1': []
     }
 
-    splits = list(kf.split(x))
+    splits = list(kf.split(x, y))
 
     for fold in range(len(splits)):
         cv_scores["fold"].append(fold)

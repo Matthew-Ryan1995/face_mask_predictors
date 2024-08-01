@@ -4,10 +4,10 @@
 Created on Thu Apr 18 14:12:16 2024
 
 Findings: Consistently find that
-    - lambda
-    - learning rate
     - subsample
+    - learning rate
     - colsample_by_tree
+    - min_child_weight
 
 @author: rya200
 """
@@ -54,11 +54,12 @@ within_one_std_err = best["value"] - best["user_attrs"]["std_err"]
 best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 
 # Order chosen based on hyperparamter importance
-sort_params = ["lambda",
-               "learning_rate",
-               "subsample",
-               "colsample_bytree",
-               ]
+sort_params = [
+    "subsample",
+    "learning_rate",
+    "colsample_bytree",
+    "min_child_weight"
+]
 
 ans = best_shots.sort_values(sort_params).iloc[0]
 

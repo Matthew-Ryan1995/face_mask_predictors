@@ -17,7 +17,7 @@ Date created:
 import json
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold, StratifiedShuffleSplit
 import pickle
 
 # %%
@@ -39,7 +39,11 @@ params["min_samples_split"] = int(params["min_samples_split"])
 
 # %%
 
-kf = KFold(n_splits=5)
+n_splits = 5
+seed = 20240627
+kf = StratifiedShuffleSplit(n_splits=n_splits,
+                            test_size=1/n_splits,
+                            random_state=seed)
 
 metric_list = ['precision', "recall", "roc_auc", "accuracy", "f1"]
 

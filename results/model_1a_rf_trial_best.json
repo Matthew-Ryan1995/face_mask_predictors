@@ -1,1 +1,1 @@
-{"number": 859, "value": 0.8361141212405752, "params": {"max_depth": 11, "min_samples_split": 18, "min_samples_leaf": 6, "max_features": "sqrt"}, "user_attrs": {"std_err": 0.007072070963225924}}
+{"number": 861, "value": 0.8520976353928299, "params": {"max_depth": 16, "min_samples_split": 7, "min_samples_leaf": 5, "max_features": "sqrt"}, "user_attrs": {"std_err": 0.010255024483468132}}

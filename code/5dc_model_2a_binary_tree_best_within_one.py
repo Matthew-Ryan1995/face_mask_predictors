@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Apr 18 14:12:16 2024
-
+    - min_imputiry_decrease
+    - min_weight_fraction_leaf
+    - splitter
+    - min_samples_leaf
 @author: rya200
 """
 
@@ -49,6 +52,9 @@ best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 
 # Order chosen based on hyperparamter importance
 sort_params = ["min_impurity_decrease",
+               "min_weight_fraction_leaf",
+               "splitter",
+               "min_samples_leaf"
                ]
 
 ans = best_shots.sort_values(sort_params).iloc[0]
