@@ -6,7 +6,7 @@ Note to self:
     Precision: How many protected positives are correct
     
 ToDo: Up-sampling on unbalanced data
-    
+    - min_imputiry_decrease
 Author:
     Jinjing Ye, Matt Ryan
     
@@ -37,7 +37,7 @@ del params["number"]
 del params["value"]
 del params["std_err"]
 
-params["min_samples_leaf"] = int(params["min_samples_leaf"])
+# params["max_depth"] = int(params["max_depth"])
 
 
 # %%
@@ -116,7 +116,7 @@ def cross_validate_model(model_number):
 
     # Print the accuracy scores for each fold
 
-    print(model_number)
+    print(f"{model_type}-{model_number}")
     # print("Cross-validation scores:", cv_scores)
 
     print("Mean recall: ", cv_scores["test_recall"].mean().round(3))

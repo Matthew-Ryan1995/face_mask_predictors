@@ -41,7 +41,7 @@ del params["std_err"]
 params["n_estimators"] = 250
 params["max_depth"] = int(params["max_depth"])
 params["min_samples_leaf"] = int(params["min_samples_leaf"])
-params["min_samples_split"] = int(params["min_samples_split"])
+# params["min_samples_split"] = int(params["min_samples_split"])
 
 # %%
 
@@ -119,7 +119,7 @@ def cross_validate_model(model_number):
 
     # Print the accuracy scores for each fold
 
-    print(model_number)
+    print(f"{model_type}-{model_number}")
     # print("Cross-validation scores:", cv_scores)
 
     print("Mean recall: ", cv_scores["test_recall"].mean().round(3))

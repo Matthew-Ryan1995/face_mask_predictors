@@ -4,11 +4,11 @@
 Created on Thu Apr 18 14:12:16 2024
 
 Findings: Consistently find that
-    - subsample
     - learning rate
+    - subsample
+    - max_depth
     - colsample_by_tree
-    - min_child_weight
-
+    
 @author: rya200
 """
 
@@ -55,10 +55,10 @@ best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 
 # Order chosen based on hyperparamter importance
 sort_params = [
-    "subsample",
     "learning_rate",
+    "subsample",
+    "max_depth",
     "colsample_bytree",
-    "min_child_weight"
 ]
 
 ans = best_shots.sort_values(sort_params).iloc[0]

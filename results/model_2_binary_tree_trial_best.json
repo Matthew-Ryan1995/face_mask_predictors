@@ -1,1 +1,1 @@
-{"number": 378, "value": 0.7991461239669881, "params": {"min_weight_fraction_leaf": 0.0008596544878182923, "min_impurity_decrease": 0.00012953283566961}, "user_attrs": {"std_err": 0.0017982075578526703}}
+{"number": 545, "value": 0.7931540908694408, "params": {"min_samples_leaf": 4, "min_weight_fraction_leaf": 0.002040489153966747, "min_impurity_decrease": 0.00011823652616591998}, "user_attrs": {"std_err": 0.0016446028900615212}}

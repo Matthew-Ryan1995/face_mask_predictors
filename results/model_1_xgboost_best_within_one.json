@@ -1,1 +1,1 @@
-{"number": 673.0, "value": 0.9160590569588514, "learning_rate": 0.08457073617418054, "min_child_weight": 1.0, "subsample": 0.8392348700305893, "colsample_bytree": 0.6695226109602148, "std_err": 0.0011373848107098345}
+{"number": 910.0, "value": 0.9184048581456381, "learning_rate": 0.021594713126428793, "max_depth": 10.0, "subsample": 0.8587927881895752, "colsample_bytree": 0.5290218321353475, "std_err": 0.000640344468906368}

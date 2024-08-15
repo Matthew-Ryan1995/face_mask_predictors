@@ -1,1 +1,1 @@
-{"number": 383.0, "value": 0.797928450955062, "min_weight_fraction_leaf": 0.004053750652317273, "min_impurity_decrease": 0.00010223203949767234, "std_err": 0.0015832210127592972}
+{"number": 545.0, "value": 0.7931540908694408, "min_samples_leaf": 4.0, "min_weight_fraction_leaf": 0.002040489153966747, "min_impurity_decrease": 0.00011823652616591998, "std_err": 0.0016446028900615212}

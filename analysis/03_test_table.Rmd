@@ -1,0 +1,68 @@
+---
+title: "Test tables"
+author: "Matt Ryan"
+date: "2024-04-29"
+output: 
+  pdf_document:
+    keep_tex: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+pacman::p_load(tidyverse, kableExtra)
+```
+
+
+```{r}
+get_model_results <- function(){
+  df <- read_csv(here::here(glue::glue("results/final_model_test_metrics.csv")),
+                 col_types = cols(), col_select = -1)
+  
+  round_to <- 3
+  models <- c("XGBoost",
+              "Random Forest")
+  df <- df %>% 
+    mutate(precision = round(test_precision, round_to),
+           recall = round(test_recall, round_to),
+           roc_auc = round(test_roc_auc, round_to),
+           accuracy = round(test_accuracy, round_to),
+           f1 = round(test_f1, round_to)) %>% 
+    select(-contains("test_")) %>% 
+    mutate(model_type = case_when(str_detect(model_type, "boost") ~ models[1],
+                                  str_detect(model_type, "rf") ~ models[2]),
+    ) %>% 
+    mutate(target=ifelse(str_detect(model_number, "_1"), "face_mask", "other"),
+           model_number = case_when(str_detect(model_number, "a") ~ "Pre-mandate",
+                                    str_detect(model_number, "b") ~ "Mandate",
+                                    TRUE ~ NA),
+           model_number = str_c(model_number, target, sep="-")) %>% 
+    arrange((model_number)) %>% 
+    drop_na() %>% 
+    rename(Precision = precision,
+           Recall = recall,
+           `ROC AUC` = roc_auc,
+           Accuracy = accuracy,
+           F1 = f1)
+  
+  return(df)
+}
+
+```
+
+```{r, message=FALSE}
+res <- get_model_results()
+```
+
+
+```{r}
+res %>% 
+  select(-model_number, -target) %>%
+  select(model_type, `ROC AUC`, everything()) %>% 
+  kable(booktabs=T, 
+        caption="Metric validation on test data.",
+        align="lrrrrr") %>% 
+  pack_rows(index=table(res$model_number)) %>% 
+  kable_styling(latex_options = c("striped", "hold_position", "scale_up"))
+```
+
+

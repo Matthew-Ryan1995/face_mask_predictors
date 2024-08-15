@@ -6,10 +6,9 @@ Created on Thu Apr 18 11:49:45 2024
 Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
+    - max_depth
     - max_features
     - min_sample_leafs
-    - max_depth
-    - min_samples_split
 
 ### 230 seems best estimators.  Fix at 250
 

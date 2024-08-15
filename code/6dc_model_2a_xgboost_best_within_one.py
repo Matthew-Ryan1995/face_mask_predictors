@@ -4,9 +4,9 @@
 Created on Thu Apr 18 14:12:16 2024
 
 Findings: Consistently find that
-    - Learning rate
-    - Subsample
-
+    - learning rate
+    - gamma
+    - subsample
 @author: rya200
 """
 
@@ -54,6 +54,7 @@ best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 # Order chosen based on hyperparamter importance
 sort_params = [
     "learning_rate",
+    # "gamma",
     "subsample",
 ]
 

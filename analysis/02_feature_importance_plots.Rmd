@@ -1,0 +1,217 @@
+---
+title: "feature_importance_plots"
+author: "Matt Ryan"
+date: "2024-08-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse)
+```
+
+```{r}
+df1 <- read_csv(here::here("results/model_1a_xgboost_feature_importance.csv"),
+                col_types = cols())
+df2 <- read_csv(here::here("results/model_1b_xgboost_feature_importance.csv"),
+                col_types = cols())
+```
+
+# Mean and std
+
+```{r}
+df_pre_long <- df1 %>% 
+  pivot_longer(-1) %>% 
+  group_by(name) %>% 
+  summarise(mean_importance = mean(value),
+            std = sd(value)/sqrt(n()),
+            q1 = quantile(value, 0.25),
+            q2 = quantile(value, 0.75),
+  ) %>% 
+  mutate(time="pre-mandate")
+df_post_long <- df2 %>% 
+  pivot_longer(-1) %>% 
+  group_by(name) %>% 
+  summarise(mean_importance = mean(value),
+            std = sd(value)/sqrt(n()),
+            q1 = quantile(value, 0.25),
+            q2 = quantile(value, 0.75),) %>% 
+  mutate(time="mandate")
+```
+
+```{r}
+df <- df_pre_long %>% 
+  arrange(-mean_importance) %>% 
+  bind_rows(df_post_long %>% arrange(-mean_importance)) %>% 
+  group_by(time) %>% 
+  slice(1:10) %>% 
+  ungroup() %>% 
+  mutate(name=fct_reorder(name, mean_importance)) %>% 
+  mutate(time = ifelse(time=="mandate", "During mandates", "Before mandates"))
+
+df$mean_importance[df$time=="Before mandates"] <- -df$mean_importance[df$time=="Before mandates"]
+df$q1[df$time=="Before mandates"] <- -df$q1[df$time=="Before mandates"]
+df$q2[df$time=="Before mandates"] <- -df$q2[df$time=="Before mandates"]
+
+df_tmp <- df %>% 
+  group_by(time) %>% 
+  filter(name=="protective_behaviour_nomask_scale") %>% 
+  mutate(mean_importance = 0.17)
+df_tmp$mean_importance[df_tmp$time=="Before mandates"] <- -df_tmp$mean_importance[df_tmp$time=="Before mandates"]
+```
+
+
+```{r}
+labels_original <- df %>% 
+  pull(name) %>% 
+  levels()
+```
+
+```{r}
+labels
+```
+
+
+```{r}
+labels <- labels_original %>% 
+  str_replace_all("_", " ") %>% 
+  str_to_title() 
+labels <- str_replace(labels, " Nomask Scale", "")
+labels[str_detect(labels, "State")] <- str_c(labels[str_detect(labels, "State")],
+                                             ")")
+labels[str_detect(labels, "State")] <- str_replace(labels[str_detect(labels,
+                                                                     "State")],
+                                                   "State ",
+                                                   "State (")
+labels[str_detect(labels, "I11 Health")] <- str_c(labels[str_detect(labels, "I11 Health")], " To Isolate")
+labels[str_detect(labels, "I11 Health")] <- str_replace(
+  labels[str_detect(labels,
+                    "I11 Health")],
+  "I11 Health ",
+  "")
+labels[str_detect(labels, "I9 Health Yes")] <- "Will Isolate If Unwell"
+labels[str_detect(labels, "D1")] <- "Has Commorbidities"
+labels[str_detect(labels, "R1")] <- "Perceived Severity"
+```
+
+
+
+
+```{r, warning=FALSE}
+df %>%
+  ggplot(aes(x=mean_importance, y = name, fill = time)) +
+  geom_col() +
+  geom_point(data=df_tmp, colour=NA) +
+  geom_errorbar(aes(xmin = q1, xmax = q2), width = 0.5)+
+  facet_wrap(~time, scale="free_x") +
+  scale_x_continuous(expand = c(0, 0), 
+                     labels = function(x) signif(abs(x), 3)) +
+  scale_y_discrete(labels = labels) +
+  labs(y = NULL, x = "Mean feature importance") +
+  theme_bw() +
+  theme(panel.spacing.x = unit(0, "mm"),
+        legend.position = "none") 
+```
+
+
+
+# Commonly important
+
+
+
+```{r}
+grouping_list <- c(
+  "Contact behaviour",
+  "Demographics",
+  "Wellbeing",
+  "Mental health",
+  "Perception of illness threat",
+  "State",
+  "Time",
+  "Trust in government",
+  "Comorbidities",
+  "Self protective behaviours"
+)
+```
+
+
+
+
+```{r}
+df_pre_long <- df1 %>% 
+  pivot_longer(-1) %>% 
+  group_by(`...1`) %>% 
+  mutate(rank = rank(-value),
+         rank = rank/max(rank)) %>% 
+  ungroup() %>% 
+  mutate(group_var = case_when(
+    str_detect(name, "i2|i9|i11") ~ grouping_list[1],
+    str_detect(name, "age|house|employ|gender") ~ grouping_list[2],
+    str_detect(name, "cantril") ~ grouping_list[3],
+    str_detect(name, "PHQ") ~ grouping_list[4],
+    str_detect(name, "r1") ~ grouping_list[5],
+    str_detect(name, "state") ~ grouping_list[6],
+    str_detect(name, "week") ~ grouping_list[7],
+    str_detect(name, "WCR") ~ grouping_list[8],
+    str_detect(name, "d1") ~ grouping_list[9],
+    str_detect(name, "protective") ~ grouping_list[10]
+  )) %>% 
+  group_by(group_var) %>% 
+  summarise(rank_percent = sum(rank<=0.1)/n()) %>% 
+  mutate(time="pre-mandate")
+df_post_long <- df2 %>% 
+  pivot_longer(-1) %>% 
+  group_by(`...1`) %>% 
+  mutate(rank = rank(-value),
+         rank = rank/max(rank)) %>% 
+  ungroup() %>% 
+  mutate(group_var = case_when(
+    str_detect(name, "i2|i9|i11") ~ grouping_list[1],
+    str_detect(name, "age|house|employ|gender") ~ grouping_list[2],
+    str_detect(name, "cantril") ~ grouping_list[3],
+    str_detect(name, "PHQ") ~ grouping_list[4],
+    str_detect(name, "r1") ~ grouping_list[5],
+    str_detect(name, "state") ~ grouping_list[6],
+    str_detect(name, "week") ~ grouping_list[7],
+    str_detect(name, "WCR") ~ grouping_list[8],
+    str_detect(name, "d1") ~ grouping_list[9],
+    str_detect(name, "protective") ~ grouping_list[10]
+  )) %>%
+  group_by(group_var) %>% 
+  summarise(rank_percent = sum(rank<=0.1)/n()) %>% 
+  mutate(time="mandate")
+```
+
+```{r}
+df <- df_pre_long %>% 
+  arrange(-rank_percent) %>% 
+  bind_rows(df_post_long %>% arrange(-rank_percent)) %>% 
+  group_by(time) %>% 
+  # filter(rank_percent > 0) %>% 
+  ungroup() %>% 
+  mutate(group_var=fct_reorder(group_var, rank_percent)) %>% 
+  mutate(time = ifelse(time=="mandate", "During mandates", "Before mandates"))
+
+df$rank_percent[df$time=="Before mandates"] <- -df$rank_percent[df$time=="Before mandates"]
+
+df_tmp <- df %>%
+  group_by(time) %>%
+  filter(group_var=="Perception of illness threat") %>%
+  mutate(rank_percent = 1.01)
+df_tmp$rank_percent[df_tmp$time=="Before mandates"] <- -df_tmp$rank_percent[df_tmp$time=="Before mandates"]
+```
+
+
+```{r, warning=FALSE}
+df %>%
+  ggplot(aes(x=rank_percent, y = group_var, fill = group_var)) +
+  geom_col() +
+  geom_point(data=df_tmp, colour=NA) +
+  facet_wrap(~time, scale="free_x") +
+  scale_x_continuous(expand = c(0, 0), 
+                     labels = function(x) signif(abs(x), 3)) +
+  labs(y = NULL, x = "Relative factor importance") +
+  theme_bw() +
+  theme(panel.spacing.x = unit(0, "mm"),
+        legend.position = "none") 
+```

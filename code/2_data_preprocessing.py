@@ -15,7 +15,7 @@ def mandates_convert(row):
     endtime = pd.to_datetime(row['endtime'], format='%Y-%m-%d')
     state = row['state']
 
-    if states_date[state][0] <= endtime <= states_date[state][1]:
+    if states_date[state][0] <= endtime:
         return 1
     else:
         return 0
@@ -26,14 +26,20 @@ cleaned_df = pd.read_csv("../data/cleaned_data.csv", keep_default_na=False)
 
 # add in one column indicates whether it is within face mask mandates
 # Dates taken from media/news outlets
-states_date = {'Australian Capital Territory': ['2021-06-28', '2022-02-25'],
-               'New South Wales': ['2021-01-04', '2022-09-20'],
-               'Northern Territory': ['2021-12-19', '2022-03-05'],
-               'Queensland': ['2021-06-29', '2022-03-07'],
-               'South Australia': ['2021-07-27', '2022-09-20'],
-               'Tasmania': ['2021-12-21', '2022-03-05'],
-               'Victoria': ['2020-07-23', '2022-09-22'],
-               'Western Australia': ['2021-12-23', '2022-04-29']}
+# states_date = {'Australian Capital Territory': ['2021-06-28', '2022-02-25'],
+#                'New South Wales': ['2021-01-04', '2022-09-20'],
+#                'Northern Territory': ['2021-12-19', '2022-03-05'],
+#                'Queensland': ['2021-06-29', '2022-03-07'],
+#                'South Australia': ['2021-07-27', '2022-09-20'],
+#                'Tasmania': ['2021-12-21', '2022-03-05'],
+#                'Victoria': ['2020-07-23', '2022-09-22'],
+#                'Western Australia': ['2021-12-23', '2022-04-29']}
+
+mandate_df = pd.read_csv("../data/mandate_start_dates.csv")
+states_date = {}
+for state, date in zip(mandate_df["RegionName"], mandate_df["Date"]):
+    states_date.update({state: [date]})
+
 
 for state, date_range in states_date.items():
     states_date[state] = [pd.to_datetime(

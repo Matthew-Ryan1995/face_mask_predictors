@@ -8,6 +8,7 @@ Find important hyperparameters for optimizing roc_auc for model 1.
 Findings: Consistently find that
     - learning rate
     - subsample
+    - gamma
 All useful for model fitting.  Tune these.
 
 @author: rya200
@@ -35,7 +36,7 @@ def objective(trial):
     # colsample_bytree = trial.suggest_float("colsample_bytree", 0.5, 0.9)
     # scale_pos_weight = trial.suggest_int("scale_pos_weight", 1, 10)
     scale_pos_weight = sum(1-y)/sum(y)
-    # gamma = trial.suggest_float("gamma", 1e-8, 1.0, log=True)
+    gamma = trial.suggest_float("gamma", 1e-8, 1.0, log=True)
     # alpha = trial.suggest_float("alpha", 0.0, 2.0)
     # reg_lambda = trial.suggest_float("lambda", 1e-8, 1.0, log=True)
     # n_estimator = trial.suggest_int("n_estimator", 100, 500)
@@ -47,7 +48,7 @@ def objective(trial):
         subsample=subsample,
         # colsample_bytree=colsample_bytree,
         scale_pos_weight=scale_pos_weight,
-        # gamma=gamma,
+        gamma=gamma,
         # alpha=alpha,
         # reg_lambda=reg_lambda,
         n_estimators=250,

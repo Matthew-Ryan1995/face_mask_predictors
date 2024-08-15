@@ -4,8 +4,11 @@
 Created on Thu Apr 18 14:12:16 2024
 
 Findings: Consistently find that
-- Most influential setting these to 0 are max_depth and max_features
-- To a lower extent, min_samples_leaf
+- max_depth
+- min_samples_leaf
+- max_features
+- min_samples_split
+
 
 @author: rya200
 """
@@ -54,8 +57,11 @@ best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 # Order chosen based on hyperparamter importance
 sort_params = [
     "max_depth",
-    "max_features",
     "min_samples_leaf",
+
+    "max_features",
+    "min_samples_split",
+
 ]
 
 ans = best_shots.sort_values(sort_params).iloc[0]

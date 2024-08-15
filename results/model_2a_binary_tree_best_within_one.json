@@ -1,1 +1,1 @@
-{"number": "798", "value": 0.7689778794813119, "min_samples_leaf": "7", "min_weight_fraction_leaf": 0.06045577778738265, "splitter": "best", "min_impurity_decrease": 8.893508426575388e-06, "std_err": 0.01259819491187668}
+{"number": 283.0, "value": 0.7821782514503929, "min_impurity_decrease": 0.0005318290118556395, "std_err": 0.0052302970594117065}

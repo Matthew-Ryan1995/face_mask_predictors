@@ -4,8 +4,9 @@
 Created on Thu Apr 18 14:12:16 2024
 
 Findings: Consistently find that
-    - Learning rate
-    - Subsample
+    - learning rate
+    - subsample
+    - gamma
 
 @author: rya200
 """
@@ -55,6 +56,9 @@ best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 sort_params = [
     "learning_rate",
     "subsample",
+    "gamma"
+    # "colsample_bytree",
+    # "lambda"
 ]
 
 ans = best_shots.sort_values(sort_params).iloc[0]

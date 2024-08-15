@@ -1,0 +1,400 @@
+---
+title: "Demographics table"
+author: "Matt Ryan"
+date: "2024-08-06"
+output: 
+  pdf_document:
+    keep_tex: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+pacman::p_load(tidyverse, gtsummary, gt)
+```
+
+
+```{r}
+df <- read_csv(here::here("data/cleaned_data.csv"), col_types = cols())
+```
+
+
+```{r}
+mandates <- read_csv(here::here("data/mandate_start_dates.csv"), col_types=cols())
+```
+
+```{r}
+df_with_mandates <- df %>% 
+  mutate(mandate_period = FALSE)
+for(s in mandates$RegionName){
+  tmp <- df %>% 
+    filter(state==s) %>% 
+    pull(endtime)
+  target_date <- mandates %>% 
+    filter(RegionName==s) %>% 
+    pull(Date)
+  mandates_vector <- tmp >= target_date
+  
+  df_with_mandates[df_with_mandates$state==s, "mandate_period"] <- mandates_vector
+}
+```
+
+```{r}
+df_pre <- df_with_mandates %>% 
+  filter(!mandate_period) %>% 
+  select(-mandate_period)
+df_during <- df_with_mandates %>% 
+  filter(mandate_period) %>% 
+  select(-mandate_period)
+```
+
+
+
+
+```{r}
+df <- df %>% 
+  mutate(i11_health = factor(i11_health, levels = c("Not sure", "Very unwilling", "Somewhat unwilling",
+                                                    "Neither willing nor unwilling",
+                                                    "Somewhat willing", "Very willing")),
+         i9_health = factor(i9_health, levels = c("Not sure", "No", "Yes")),
+         employment_status = factor(employment_status, levels = c("Not working", "Unemployed",
+                                                                  "Part time employment", 
+                                                                  "Full time employment", "Retired")),
+         WCRex2 = factor(WCRex2, levels = c("Don't know", "No confidence at all", "Not very much confidence",
+                                            "A fair amount of confidence", "A lot of confidence")),
+         WCRex1 = factor(WCRex1, levels=c("Don't know", "Very badly", "Somewhat badly",
+                                          "Somewhat well", "Very well")),
+         PHQ4_1 = factor(PHQ4_1, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_2 = factor(PHQ4_2, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_3 = factor(PHQ4_3, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_4 = factor(PHQ4_4, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         d1_comorbidities = ifelse(is.na(d1_comorbidities), "NA", d1_comorbidities),
+         d1_comorbidities = str_replace_all(d1_comorbidities, "_", " "),
+         d1_comorbidities = factor(d1_comorbidities, levels=c("NA", "Prefer not to say", "No", "Yes")),
+         # face_mask_behaviour_binary = ifelse(face_mask_behaviour_binary==1, "Yes", "No"),
+         face_mask_behaviour_binary = factor(face_mask_behaviour_binary, levels=c("Yes", "No")),
+         # protective_behaviour_binary = ifelse(protective_behaviour_binary==1, "Yes", "No"),
+         protective_behaviour_binary = factor(protective_behaviour_binary, levels=c("Yes", "No")),
+         ) %>% 
+  select(face_mask_behaviour_binary, protective_behaviour_binary, everything())
+
+df_pre <- df_pre %>% 
+  mutate(i11_health = factor(i11_health, levels = c("Not sure", "Very unwilling", "Somewhat unwilling",
+                                                    "Neither willing nor unwilling",
+                                                    "Somewhat willing", "Very willing")),
+         i9_health = factor(i9_health, levels = c("Not sure", "No", "Yes")),
+         employment_status = factor(employment_status, levels = c("Not working", "Unemployed",
+                                                                  "Part time employment", 
+                                                                  "Full time employment", "Retired")),
+         WCRex2 = factor(WCRex2, levels = c("Don't know", "No confidence at all", "Not very much confidence",
+                                            "A fair amount of confidence", "A lot of confidence")),
+         WCRex1 = factor(WCRex1, levels=c("Don't know", "Very badly", "Somewhat badly",
+                                          "Somewhat well", "Very well")),
+         PHQ4_1 = factor(PHQ4_1, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_2 = factor(PHQ4_2, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_3 = factor(PHQ4_3, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_4 = factor(PHQ4_4, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         d1_comorbidities = ifelse(is.na(d1_comorbidities), "NA", d1_comorbidities),
+         d1_comorbidities = str_replace_all(d1_comorbidities, "_", " "),
+         d1_comorbidities = factor(d1_comorbidities, levels=c("NA", "Prefer not to say", "No", "Yes")),
+         # face_mask_behaviour_binary = ifelse(face_mask_behaviour_binary==1, "Yes", "No"),
+         face_mask_behaviour_binary = factor(face_mask_behaviour_binary, levels=c("Yes", "No")),
+         # protective_behaviour_binary = ifelse(protective_behaviour_binary==1, "Yes", "No"),
+         protective_behaviour_binary = factor(protective_behaviour_binary, levels=c("Yes", "No")),
+         ) %>% 
+  select(face_mask_behaviour_binary, protective_behaviour_binary, everything())
+
+df_during <- df_during %>% 
+  mutate(i11_health = factor(i11_health, levels = c("Not sure", "Very unwilling", "Somewhat unwilling",
+                                                    "Neither willing nor unwilling",
+                                                    "Somewhat willing", "Very willing")),
+         i9_health = factor(i9_health, levels = c("Not sure", "No", "Yes")),
+         employment_status = factor(employment_status, levels = c("Not working", "Unemployed",
+                                                                  "Part time employment", 
+                                                                  "Full time employment", "Retired")),
+         WCRex2 = factor(WCRex2, levels = c("Don't know", "No confidence at all", "Not very much confidence",
+                                            "A fair amount of confidence", "A lot of confidence")),
+         WCRex1 = factor(WCRex1, levels=c("Don't know", "Very badly", "Somewhat badly",
+                                          "Somewhat well", "Very well")),
+         PHQ4_1 = factor(PHQ4_1, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_2 = factor(PHQ4_2, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_3 = factor(PHQ4_3, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         PHQ4_4 = factor(PHQ4_4, levels = c("N/A", "Prefer not to say",  "Not at all", "Several days", 
+                                            "More than half the days", "Nearly every day")),
+         d1_comorbidities = ifelse(is.na(d1_comorbidities), "NA", d1_comorbidities),
+         d1_comorbidities = str_replace_all(d1_comorbidities, "_", " "),
+         d1_comorbidities = factor(d1_comorbidities, levels=c("NA", "Prefer not to say", "No", "Yes")),
+         # face_mask_behaviour_binary = ifelse(face_mask_behaviour_binary==1, "Yes", "No"),
+         face_mask_behaviour_binary = factor(face_mask_behaviour_binary, levels=c("Yes", "No")),
+         # protective_behaviour_binary = ifelse(protective_behaviour_binary==1, "Yes", "No"),
+         protective_behaviour_binary = factor(protective_behaviour_binary, levels=c("Yes", "No")),
+         ) %>% 
+  select(face_mask_behaviour_binary, protective_behaviour_binary, everything())
+```
+
+# Full table only
+
+```{r}
+grouping_list <- c(
+  "Contact behaviour",
+  "Demographics",
+  "Wellbeing",
+  "Health, mental health and wellbeing",
+  "Perception of illness threat",
+  "State",
+  "Time",
+  "Trust in government",
+  "Comorbidities",
+  "Self protective behaviours"
+)
+
+
+sc_table <- df %>%
+  select(-RecordNo, -endtime, 
+         -face_mask_behaviour_scale, -protective_behaviour_scale,
+         -week_number) %>% 
+  tbl_summary(statistic = 
+                list(all_continuous() ~ "{mean} ({sd})"),
+              digits = all_continuous()~2,
+              type = list(household_size ~ "continuous",
+                          r1_1 ~ "continuous",
+                          r1_2 ~ "continuous",
+                          protective_behaviour_nomask_scale ~ "continuous"),
+              label = c(i2_health ~ "Non-household contacts", 
+                        i9_health ~ "Willingness to isolate if unwell", 
+                        i11_health ~ "Willingness to isolate if instructed", 
+                        age ~ "Age", 
+                        gender ~ "Gender",
+                        household_size ~ "Household size", 
+                        WCRex2 ~ "Confidence in government response to COVID-19", 
+                        WCRex1 ~ "Opinion of govenement handling of COVID-19",
+                        employment_status ~ "Employment status", 
+                        PHQ4_1 ~ "Little interest or pleasure in doing things", 
+                        PHQ4_2 ~ "Feeling down, depressed, or hopeless", 
+                        PHQ4_3 ~ "Feeling nervous, anxious, or on edge", 
+                        PHQ4_4 ~ "Not being able to stop or control worrying", 
+                        r1_1 ~ "Perceived severity (out of seven)", 
+                        r1_2 ~ "Perceived susceptibility (out of seven)", 
+                        cantril_ladder ~ "Satisfaction with life",
+                        face_mask_behaviour_binary ~ "Mask usage",
+                        protective_behaviour_binary ~ "Compliance with protective behaviours",
+                        d1_comorbidities ~ "Comorbidity",
+                        state ~ "State",
+                        protective_behaviour_nomask_scale ~ "Other protective health behaviours (out of five)"
+              )) %>% 
+  modify_table_body(mutate,
+                    groupname_col = var_grouping <- case_when(
+                      str_detect(variable, "i2|i9|i11|nomask") ~ grouping_list[10],
+                      str_detect(variable, "age|house|employ|gender|state") ~ grouping_list[2],
+                      # str_detect(variable, "cantril") ~ grouping_list[3],
+                      str_detect(variable, "PHQ|cantril|d1") ~ grouping_list[4],
+                      str_detect(variable, "r1") ~ grouping_list[5],
+                      # str_detect(variable, "state") ~ grouping_list[6],
+                      str_detect(variable, "week") ~ grouping_list[7],
+                      str_detect(variable, "WCR") ~ grouping_list[8],
+                      # str_detect(variable, "d1") ~ grouping_list[9],
+                      # str_detect(variable, "nomask") ~ grouping_list[10],
+                      TRUE ~ "Response variables"
+                    )
+  )
+sc_table <- sc_table %>% 
+  modify_header(label ~ "**Variable**") %>% 
+  italicize_levels() %>% 
+  as_gt() 
+  # tab_source_note(md())
+
+sc_table <- sc_table %>% 
+  tab_header(title = "Full sample characteristics")
+
+sc_table <- sc_table %>% 
+  cols_align(align = "left", columns = 1) %>% 
+  cols_align(align = "right", columns = stat_0) %>%
+  opt_stylize(style = 6, color = 'gray') %>% 
+  tab_options(
+    data_row.padding = px(2),
+    data_row.padding.horizontal = px(2),
+    heading.align = 'left',
+    heading.title.font.size = px(16)
+  ) 
+```
+
+```{r}
+sc_table
+```
+
+
+# Sub data tables
+
+
+```{r}
+grouping_list <- c(
+  "Contact behaviour",
+  "Demographics",
+  "Wellbeing",
+  "Health, mental health and wellbeing",
+  "Perception of illness threat",
+  "State",
+  "Time",
+  "Trust in government",
+  "Comorbidities",
+  "Self protective behaviours"
+)
+
+
+sc_table_full <- df %>%
+  select(-RecordNo, -endtime, 
+         -face_mask_behaviour_scale, -protective_behaviour_scale,
+         -week_number) %>% 
+  tbl_summary(statistic = 
+                list(all_continuous() ~ "{mean} ({sd})"),
+              digits = all_continuous()~2,
+              type = list(household_size ~ "continuous",
+                          r1_1 ~ "continuous",
+                          r1_2 ~ "continuous",
+                          protective_behaviour_nomask_scale ~ "continuous"),
+              label = c(i2_health ~ "Non-household contacts", 
+                        i9_health ~ "Willingness to isolate if unwell", 
+                        i11_health ~ "Willingness to isolate if instructed", 
+                        age ~ "Age", 
+                        gender ~ "Gender",
+                        household_size ~ "Household size", 
+                        WCRex2 ~ "Confidence in government response to COVID-19", 
+                        WCRex1 ~ "Opinion of govenement handling of COVID-19",
+                        employment_status ~ "Employment status", 
+                        PHQ4_1 ~ "Little interest or pleasure in doing things", 
+                        PHQ4_2 ~ "Feeling down, depressed, or hopeless", 
+                        PHQ4_3 ~ "Feeling nervous, anxious, or on edge", 
+                        PHQ4_4 ~ "Not being able to stop or control worrying", 
+                        r1_1 ~ "Perceived severity (out of seven)", 
+                        r1_2 ~ "Perceived susceptibility (out of seven)", 
+                        cantril_ladder ~ "Satisfaction with life",
+                        face_mask_behaviour_binary ~ "Mask usage",
+                        protective_behaviour_binary ~ "Compliance with protective behaviours",
+                        d1_comorbidities ~ "Comorbidity",
+                        state ~ "State",
+                        protective_behaviour_nomask_scale ~ "Other protective health behaviours (out of five)"
+              )) 
+sc_table_pre <- df_pre %>%
+  select(-RecordNo, -endtime, 
+         -face_mask_behaviour_scale, -protective_behaviour_scale,
+         -week_number) %>% 
+  tbl_summary(statistic = 
+                list(all_continuous() ~ "{mean} ({sd})"),
+              digits = all_continuous()~2,
+              type = list(household_size ~ "continuous",
+                          r1_1 ~ "continuous",
+                          r1_2 ~ "continuous",
+                          protective_behaviour_nomask_scale ~ "continuous"),
+              label = c(i2_health ~ "Non-household contacts", 
+                        i9_health ~ "Willingness to isolate if unwell", 
+                        i11_health ~ "Willingness to isolate if instructed", 
+                        age ~ "Age", 
+                        gender ~ "Gender",
+                        household_size ~ "Household size", 
+                        WCRex2 ~ "Confidence in government response to COVID-19", 
+                        WCRex1 ~ "Opinion of govenement handling of COVID-19",
+                        employment_status ~ "Employment status", 
+                        PHQ4_1 ~ "Little interest or pleasure in doing things", 
+                        PHQ4_2 ~ "Feeling down, depressed, or hopeless", 
+                        PHQ4_3 ~ "Feeling nervous, anxious, or on edge", 
+                        PHQ4_4 ~ "Not being able to stop or control worrying", 
+                        r1_1 ~ "Perceived severity (out of seven)", 
+                        r1_2 ~ "Perceived susceptibility (out of seven)", 
+                        cantril_ladder ~ "Satisfaction with life",
+                        face_mask_behaviour_binary ~ "Mask usage",
+                        protective_behaviour_binary ~ "Compliance with protective behaviours",
+                        d1_comorbidities ~ "Comorbidity",
+                        state ~ "State",
+                        protective_behaviour_nomask_scale ~ "Other protective health behaviours (out of five)"
+              )) 
+sc_table_during <- df_during %>%
+  select(-RecordNo, -endtime, 
+         -face_mask_behaviour_scale, -protective_behaviour_scale,
+         -week_number) %>% 
+  tbl_summary(statistic = 
+                list(all_continuous() ~ "{mean} ({sd})"),
+              digits = all_continuous()~2,
+              type = list(household_size ~ "continuous",
+                          r1_1 ~ "continuous",
+                          r1_2 ~ "continuous",
+                          protective_behaviour_nomask_scale ~ "continuous"),
+              label = c(i2_health ~ "Non-household contacts", 
+                        i9_health ~ "Willingness to isolate if unwell", 
+                        i11_health ~ "Willingness to isolate if instructed", 
+                        age ~ "Age", 
+                        gender ~ "Gender",
+                        household_size ~ "Household size", 
+                        WCRex2 ~ "Confidence in government response to COVID-19", 
+                        WCRex1 ~ "Opinion of govenement handling of COVID-19",
+                        employment_status ~ "Employment status", 
+                        PHQ4_1 ~ "Little interest or pleasure in doing things", 
+                        PHQ4_2 ~ "Feeling down, depressed, or hopeless", 
+                        PHQ4_3 ~ "Feeling nervous, anxious, or on edge", 
+                        PHQ4_4 ~ "Not being able to stop or control worrying", 
+                        r1_1 ~ "Perceived severity (out of seven)", 
+                        r1_2 ~ "Perceived susceptibility (out of seven)", 
+                        cantril_ladder ~ "Satisfaction with life",
+                        face_mask_behaviour_binary ~ "Mask usage",
+                        protective_behaviour_binary ~ "Compliance with protective behaviours",
+                        d1_comorbidities ~ "Comorbidity",
+                        state ~ "State",
+                        protective_behaviour_nomask_scale ~ "Other protective health behaviours (out of five)"
+              )) 
+
+sc_table <- tbl_merge(list(sc_table_full,
+                           sc_table_pre,
+                           sc_table_during),
+                      tab_spanner = c("**Overall**",
+                                      "**Pre mandates**",
+                                      "**During mandate**"))
+
+sc_table <- sc_table %>% 
+  modify_table_body(mutate,
+                    groupname_col = var_grouping <- case_when(
+                      str_detect(variable, "i2|i9|i11|nomask") ~ grouping_list[10],
+                      str_detect(variable, "age|house|employ|gender|state") ~ grouping_list[2],
+                      # str_detect(variable, "cantril") ~ grouping_list[3],
+                      str_detect(variable, "PHQ|cantril|d1") ~ grouping_list[4],
+                      str_detect(variable, "r1") ~ grouping_list[5],
+                      # str_detect(variable, "state") ~ grouping_list[6],
+                      str_detect(variable, "week") ~ grouping_list[7],
+                      str_detect(variable, "WCR") ~ grouping_list[8],
+                      # str_detect(variable, "d1") ~ grouping_list[9],
+                      # str_detect(variable, "nomask") ~ grouping_list[10],
+                      TRUE ~ "Response variables"
+                    )
+  )
+sc_table <- sc_table %>% 
+  modify_header(label ~ "**Variable**") %>% 
+  italicize_levels() %>% 
+  as_gt() 
+  # tab_source_note(md())
+
+sc_table <- sc_table %>% 
+  tab_header(title = "Full sample characteristics")
+
+sc_table <- sc_table %>% 
+  cols_align(align = "left", columns = 1) %>% 
+  cols_align(align = "right", columns = contains("stat_0")) %>%
+  opt_stylize(style = 6, color = 'gray') %>% 
+  tab_options(
+    data_row.padding = px(2),
+    data_row.padding.horizontal = px(2),
+    heading.align = 'left',
+    heading.title.font.size = px(16)
+  ) 
+```
+
+```{r}
+sc_table
+```

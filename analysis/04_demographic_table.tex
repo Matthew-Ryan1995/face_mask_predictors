@@ -1,0 +1,317 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{colortbl}
+\usepackage{array}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Demographics table},
+  pdfauthor={Matt Ryan},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Demographics table}
+\author{Matt Ryan}
+\date{2024-08-06}
+
+\begin{document}
+\maketitle
+
+\hypertarget{full-table-only}{%
+\section{Full table only}\label{full-table-only}}
+
+\setlength{\LTpost}{0mm}
+\begin{longtable}{lr}
+\caption*{
+{\large Full sample characteristics}
+} \\ 
+\toprule
+\textbf{Variable} & \textbf{N = 40,136}\textsuperscript{\textit{1}} \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{2}{l}{Response variables} \\ 
+\midrule\addlinespace[2.5pt]
+Mask usage & 21,658 (54\%) \\ 
+Compliance with protective behaviours & 26,149 (65\%) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{2}{l}{Self protective behaviours} \\ 
+\midrule\addlinespace[2.5pt]
+Non-household contacts & 23.00 (87.49) \\ 
+Willingness to isolate if unwell &  \\ 
+    Not sure & 3,328 (8.3\%) \\ 
+    No & 6,808 (17\%) \\ 
+    Yes & 30,000 (75\%) \\ 
+Willingness to isolate if instructed &  \\ 
+    Not sure & 546 (1.4\%) \\ 
+    Very unwilling & 715 (1.8\%) \\ 
+    Somewhat unwilling & 796 (2.0\%) \\ 
+    Neither willing nor unwilling & 2,484 (6.2\%) \\ 
+    Somewhat willing & 7,859 (20\%) \\ 
+    Very willing & 27,736 (69\%) \\ 
+Other protective health behaviours (out of five) & 3.73 (1.40) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{2}{l}{Demographics} \\ 
+\midrule\addlinespace[2.5pt]
+Age & 47.95 (17.04) \\ 
+Gender &  \\ 
+    Female & 20,752 (52\%) \\ 
+    Male & 19,384 (48\%) \\ 
+State &  \\ 
+    Australian Capital Territory & 635 (1.6\%) \\ 
+    New South Wales & 12,204 (30\%) \\ 
+    Northern Territory & 274 (0.7\%) \\ 
+    Queensland & 8,188 (20\%) \\ 
+    South Australia & 3,853 (9.6\%) \\ 
+    Tasmania & 825 (2.1\%) \\ 
+    Victoria & 10,323 (26\%) \\ 
+    Western Australia & 3,834 (9.6\%) \\ 
+Household size & 2.67 (1.37) \\ 
+Employment status &  \\ 
+    Not working & 4,285 (11\%) \\ 
+    Unemployed & 4,154 (10\%) \\ 
+    Part time employment & 9,268 (23\%) \\ 
+    Full time employment & 14,001 (35\%) \\ 
+    Retired & 8,428 (21\%) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{2}{l}{Trust in government} \\ 
+\midrule\addlinespace[2.5pt]
+Confidence in government response to COVID-19 &  \\ 
+    Don't know & 1,149 (2.9\%) \\ 
+    No confidence at all & 2,528 (6.3\%) \\ 
+    Not very much confidence & 6,296 (16\%) \\ 
+    A fair amount of confidence & 19,806 (49\%) \\ 
+    A lot of confidence & 10,357 (26\%) \\ 
+Opinion of govenement handling of COVID-19 &  \\ 
+    Don't know & 1,270 (3.2\%) \\ 
+    Very badly & 5,043 (13\%) \\ 
+    Somewhat badly & 6,635 (17\%) \\ 
+    Somewhat well & 17,333 (43\%) \\ 
+    Very well & 9,855 (25\%) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{2}{l}{Health, mental health and wellbeing} \\ 
+\midrule\addlinespace[2.5pt]
+Satisfaction with life & 6.29 (2.07) \\ 
+Little interest or pleasure in doing things &  \\ 
+    N/A & 6,175 (15\%) \\ 
+    Prefer not to say & 391 (1.0\%) \\ 
+    Not at all & 14,184 (35\%) \\ 
+    Several days & 10,670 (27\%) \\ 
+    More than half the days & 4,848 (12\%) \\ 
+    Nearly every day & 3,868 (9.6\%) \\ 
+Feeling down, depressed, or hopeless &  \\ 
+    N/A & 6,183 (15\%) \\ 
+    Prefer not to say & 453 (1.1\%) \\ 
+    Not at all & 15,355 (38\%) \\ 
+    Several days & 10,446 (26\%) \\ 
+    More than half the days & 4,026 (10\%) \\ 
+    Nearly every day & 3,673 (9.2\%) \\ 
+Feeling nervous, anxious, or on edge &  \\ 
+    N/A & 6,183 (15\%) \\ 
+    Prefer not to say & 398 (1.0\%) \\ 
+    Not at all & 13,438 (33\%) \\ 
+    Several days & 11,558 (29\%) \\ 
+    More than half the days & 4,389 (11\%) \\ 
+    Nearly every day & 4,170 (10\%) \\ 
+Not being able to stop or control worrying &  \\ 
+    N/A & 6,182 (15\%) \\ 
+    Prefer not to say & 407 (1.0\%) \\ 
+    Not at all & 15,223 (38\%) \\ 
+    Several days & 10,160 (25\%) \\ 
+    More than half the days & 4,074 (10\%) \\ 
+    Nearly every day & 4,090 (10\%) \\ 
+Comorbidity &  \\ 
+    NA & 6,205 (15\%) \\ 
+    Prefer not to say & 583 (1.5\%) \\ 
+    No & 15,005 (37\%) \\ 
+    Yes & 18,343 (46\%) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{2}{l}{Perception of illness threat} \\ 
+\midrule\addlinespace[2.5pt]
+Perceived severity (out of seven) & 4.47 (1.96) \\ 
+Perceived susceptibility (out of seven) & 3.51 (1.83) \\ 
+\bottomrule
+\end{longtable}
+\begin{minipage}{\linewidth}
+\textsuperscript{\textit{1}}n (\%); Mean (SD)\\
+\end{minipage}
+
+\hypertarget{sub-data-tables}{%
+\section{Sub data tables}\label{sub-data-tables}}
+
+\setlength{\LTpost}{0mm}
+\begin{longtable}{lrrr}
+\caption*{
+{\large Full sample characteristics}
+} \\ 
+\toprule
+ & \textbf{Overall} & \textbf{Pre mandates} & \textbf{During mandate} \\ 
+\cmidrule(lr){2-2} \cmidrule(lr){3-3} \cmidrule(lr){4-4}
+\textbf{Variable} & \textbf{N = 40,136}\textsuperscript{\textit{1}} & \textbf{N = 14,945}\textsuperscript{\textit{1}} & \textbf{N = 25,191}\textsuperscript{\textit{1}} \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{4}{l}{Response variables} \\ 
+\midrule\addlinespace[2.5pt]
+Mask usage & 21,658 (54\%) & 3,861 (26\%) & 17,797 (71\%) \\ 
+Compliance with protective behaviours & 26,149 (65\%) & 7,910 (53\%) & 18,239 (72\%) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{4}{l}{Self protective behaviours} \\ 
+\midrule\addlinespace[2.5pt]
+Non-household contacts & 23.00 (87.49) & 21.19 (79.06) & 24.08 (92.12) \\ 
+Willingness to isolate if unwell &  &  &  \\ 
+    Not sure & 3,328 (8.3\%) & 1,314 (8.8\%) & 2,014 (8.0\%) \\ 
+    No & 6,808 (17\%) & 2,556 (17\%) & 4,252 (17\%) \\ 
+    Yes & 30,000 (75\%) & 11,075 (74\%) & 18,925 (75\%) \\ 
+Willingness to isolate if instructed &  &  &  \\ 
+    Not sure & 546 (1.4\%) & 218 (1.5\%) & 328 (1.3\%) \\ 
+    Very unwilling & 715 (1.8\%) & 251 (1.7\%) & 464 (1.8\%) \\ 
+    Somewhat unwilling & 796 (2.0\%) & 292 (2.0\%) & 504 (2.0\%) \\ 
+    Neither willing nor unwilling & 2,484 (6.2\%) & 1,009 (6.8\%) & 1,475 (5.9\%) \\ 
+    Somewhat willing & 7,859 (20\%) & 2,957 (20\%) & 4,902 (19\%) \\ 
+    Very willing & 27,736 (69\%) & 10,218 (68\%) & 17,518 (70\%) \\ 
+Other protective health behaviours (out of five) & 3.73 (1.40) & 3.56 (1.41) & 3.83 (1.38) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{4}{l}{Demographics} \\ 
+\midrule\addlinespace[2.5pt]
+Age & 47.95 (17.04) & 48.28 (17.05) & 47.75 (17.03) \\ 
+Gender &  &  &  \\ 
+    Female & 20,752 (52\%) & 7,697 (52\%) & 13,055 (52\%) \\ 
+    Male & 19,384 (48\%) & 7,248 (48\%) & 12,136 (48\%) \\ 
+State &  &  &  \\ 
+    Australian Capital Territory & 635 (1.6\%) & 414 (2.8\%) & 221 (0.9\%) \\ 
+    New South Wales & 12,204 (30\%) & 7,135 (48\%) & 5,069 (20\%) \\ 
+    Northern Territory & 274 (0.7\%) & 233 (1.6\%) & 41 (0.2\%) \\ 
+    Queensland & 8,188 (20\%) & 2,472 (17\%) & 5,716 (23\%) \\ 
+    South Australia & 3,853 (9.6\%) & 2,313 (15\%) & 1,540 (6.1\%) \\ 
+    Tasmania & 825 (2.1\%) & 648 (4.3\%) & 177 (0.7\%) \\ 
+    Victoria & 10,323 (26\%) & 502 (3.4\%) & 9,821 (39\%) \\ 
+    Western Australia & 3,834 (9.6\%) & 1,228 (8.2\%) & 2,606 (10\%) \\ 
+Household size & 2.67 (1.37) & 2.69 (1.39) & 2.66 (1.36) \\ 
+Employment status &  &  &  \\ 
+    Not working & 4,285 (11\%) & 1,523 (10\%) & 2,762 (11\%) \\ 
+    Unemployed & 4,154 (10\%) & 1,597 (11\%) & 2,557 (10\%) \\ 
+    Part time employment & 9,268 (23\%) & 3,465 (23\%) & 5,803 (23\%) \\ 
+    Full time employment & 14,001 (35\%) & 5,126 (34\%) & 8,875 (35\%) \\ 
+    Retired & 8,428 (21\%) & 3,234 (22\%) & 5,194 (21\%) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{4}{l}{Trust in government} \\ 
+\midrule\addlinespace[2.5pt]
+Confidence in government response to COVID-19 &  &  &  \\ 
+    Don't know & 1,149 (2.9\%) & 401 (2.7\%) & 748 (3.0\%) \\ 
+    No confidence at all & 2,528 (6.3\%) & 558 (3.7\%) & 1,970 (7.8\%) \\ 
+    Not very much confidence & 6,296 (16\%) & 1,595 (11\%) & 4,701 (19\%) \\ 
+    A fair amount of confidence & 19,806 (49\%) & 7,591 (51\%) & 12,215 (48\%) \\ 
+    A lot of confidence & 10,357 (26\%) & 4,800 (32\%) & 5,557 (22\%) \\ 
+Opinion of govenement handling of COVID-19 &  &  &  \\ 
+    Don't know & 1,270 (3.2\%) & 406 (2.7\%) & 864 (3.4\%) \\ 
+    Very badly & 5,043 (13\%) & 1,029 (6.9\%) & 4,014 (16\%) \\ 
+    Somewhat badly & 6,635 (17\%) & 1,737 (12\%) & 4,898 (19\%) \\ 
+    Somewhat well & 17,333 (43\%) & 6,979 (47\%) & 10,354 (41\%) \\ 
+    Very well & 9,855 (25\%) & 4,794 (32\%) & 5,061 (20\%) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{4}{l}{Health, mental health and wellbeing} \\ 
+\midrule\addlinespace[2.5pt]
+Satisfaction with life & 6.29 (2.07) & 6.31 (2.05) & 6.27 (2.08) \\ 
+Little interest or pleasure in doing things &  &  &  \\ 
+    N/A & 6,175 (15\%) & 1,638 (11\%) & 4,537 (18\%) \\ 
+    Prefer not to say & 391 (1.0\%) & 148 (1.0\%) & 243 (1.0\%) \\ 
+    Not at all & 14,184 (35\%) & 5,703 (38\%) & 8,481 (34\%) \\ 
+    Several days & 10,670 (27\%) & 4,095 (27\%) & 6,575 (26\%) \\ 
+    More than half the days & 4,848 (12\%) & 1,873 (13\%) & 2,975 (12\%) \\ 
+    Nearly every day & 3,868 (9.6\%) & 1,488 (10.0\%) & 2,380 (9.4\%) \\ 
+Feeling down, depressed, or hopeless &  &  &  \\ 
+    N/A & 6,183 (15\%) & 1,635 (11\%) & 4,548 (18\%) \\ 
+    Prefer not to say & 453 (1.1\%) & 184 (1.2\%) & 269 (1.1\%) \\ 
+    Not at all & 15,355 (38\%) & 6,192 (41\%) & 9,163 (36\%) \\ 
+    Several days & 10,446 (26\%) & 3,965 (27\%) & 6,481 (26\%) \\ 
+    More than half the days & 4,026 (10\%) & 1,570 (11\%) & 2,456 (9.7\%) \\ 
+    Nearly every day & 3,673 (9.2\%) & 1,399 (9.4\%) & 2,274 (9.0\%) \\ 
+Feeling nervous, anxious, or on edge &  &  &  \\ 
+    N/A & 6,183 (15\%) & 1,640 (11\%) & 4,543 (18\%) \\ 
+    Prefer not to say & 398 (1.0\%) & 163 (1.1\%) & 235 (0.9\%) \\ 
+    Not at all & 13,438 (33\%) & 5,397 (36\%) & 8,041 (32\%) \\ 
+    Several days & 11,558 (29\%) & 4,454 (30\%) & 7,104 (28\%) \\ 
+    More than half the days & 4,389 (11\%) & 1,673 (11\%) & 2,716 (11\%) \\ 
+    Nearly every day & 4,170 (10\%) & 1,618 (11\%) & 2,552 (10\%) \\ 
+Not being able to stop or control worrying &  &  &  \\ 
+    N/A & 6,182 (15\%) & 1,634 (11\%) & 4,548 (18\%) \\ 
+    Prefer not to say & 407 (1.0\%) & 154 (1.0\%) & 253 (1.0\%) \\ 
+    Not at all & 15,223 (38\%) & 6,089 (41\%) & 9,134 (36\%) \\ 
+    Several days & 10,160 (25\%) & 3,894 (26\%) & 6,266 (25\%) \\ 
+    More than half the days & 4,074 (10\%) & 1,584 (11\%) & 2,490 (9.9\%) \\ 
+    Nearly every day & 4,090 (10\%) & 1,590 (11\%) & 2,500 (9.9\%) \\ 
+Comorbidity &  &  &  \\ 
+    NA & 6,205 (15\%) & 1,648 (11\%) & 4,557 (18\%) \\ 
+    Prefer not to say & 583 (1.5\%) & 212 (1.4\%) & 371 (1.5\%) \\ 
+    No & 15,005 (37\%) & 5,899 (39\%) & 9,106 (36\%) \\ 
+    Yes & 18,343 (46\%) & 7,186 (48\%) & 11,157 (44\%) \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{4}{l}{Perception of illness threat} \\ 
+\midrule\addlinespace[2.5pt]
+Perceived severity (out of seven) & 4.47 (1.96) & 4.44 (1.99) & 4.48 (1.94) \\ 
+Perceived susceptibility (out of seven) & 3.51 (1.83) & 3.16 (1.73) & 3.72 (1.86) \\ 
+\bottomrule
+\end{longtable}
+\begin{minipage}{\linewidth}
+\textsuperscript{\textit{1}}n (\%); Mean (SD)\\
+\end{minipage}
+
+\end{document}

@@ -8,9 +8,8 @@ Find important hyperparameters for optimizing roc_auc for model 1.
 Findings: Consistently find that
     - min_imputiry_decrease
     - min_weight_fraction_leaf
-    - criterion
-    - min_samples_split
     - max_depth
+    - min_samples_split
 All useful for model fitting.  Tune these.
 
 @author: rya200

@@ -7,9 +7,7 @@ Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
     - min_imputiry_decrease
-    - min_weight_fraction_leaf
-    - splitter
-    - min_samples_leaf
+
 All useful for model fitting.  Tune these.
 
 @author: rya200
@@ -33,10 +31,10 @@ def objective(trial):
     param_ranges = {
         # 'max_depth': trial.suggest_int('max_depth', 1, 20),
         # 'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
-        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
-        'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5),
+        # 'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
+        # 'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5),
         # 'criterion': trial.suggest_categorical('criterion', ['gini', 'entropy']),
-        'splitter': trial.suggest_categorical('splitter', ['best', 'random']),
+        # 'splitter': trial.suggest_categorical('splitter', ['best', 'random']),
         'min_impurity_decrease': trial.suggest_float('min_impurity_decrease', 0.0, 0.2),
         # 'class_weight': trial.suggest_categorical('class_weight', [None, 'balanced']),
     }

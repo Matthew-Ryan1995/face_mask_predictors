@@ -1,1 +1,1 @@
-{"number": 309, "value": 0.8404905210835389, "params": {"learning_rate": 0.09308989055254613, "subsample": 0.9349303739133}, "user_attrs": {"std_err": 0.001788564073726511}}
+{"number": 481, "value": 0.8372646547989913, "params": {"learning_rate": 0.06781911781611015, "subsample": 0.8402244152328592}, "user_attrs": {"std_err": 0.001851201174910117}}

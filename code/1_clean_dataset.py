@@ -80,6 +80,7 @@ for column in df.columns:
     if column.startswith("i12_health_"):
         df[column] = df[column].map(frequency_dict)
 
+
 # Create face mask and protective behaviour scales
 
 # Face mask

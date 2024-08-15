@@ -1,0 +1,118 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Test tables},
+  pdfauthor={Matt Ryan},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Test tables}
+\author{Matt Ryan}
+\date{2024-04-29}
+
+\begin{document}
+\maketitle
+
+\begin{table}[!h]
+
+\caption{\label{tab:unnamed-chunk-3}Metric validation on test data.}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+model\_type & ROC AUC & Precision & Recall & Accuracy & F1\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{Mandate-face\_mask}}\\
+\cellcolor{gray!6}{\hspace{1em}XGBoost} & \cellcolor{gray!6}{0.888} & \cellcolor{gray!6}{0.901} & \cellcolor{gray!6}{0.884} & \cellcolor{gray!6}{0.846} & \cellcolor{gray!6}{0.892}\\
+\hspace{1em}Random Forest & 0.880 & 0.891 & 0.890 & 0.842 & 0.891\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{Mandate-other}}\\
+\cellcolor{gray!6}{\hspace{1em}XGBoost} & \cellcolor{gray!6}{0.847} & \cellcolor{gray!6}{0.897} & \cellcolor{gray!6}{0.776} & \cellcolor{gray!6}{0.771} & \cellcolor{gray!6}{0.832}\\
+\hspace{1em}Random Forest & 0.840 & 0.868 & 0.856 & 0.799 & 0.862\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{Pre-mandate-face\_mask}}\\
+\cellcolor{gray!6}{\hspace{1em}XGBoost} & \cellcolor{gray!6}{0.853} & \cellcolor{gray!6}{0.561} & \cellcolor{gray!6}{0.746} & \cellcolor{gray!6}{0.776} & \cellcolor{gray!6}{0.640}\\
+\hspace{1em}Random Forest & 0.848 & 0.666 & 0.576 & 0.809 & 0.618\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{Pre-mandate-other}}\\
+\cellcolor{gray!6}{\hspace{1em}XGBoost} & \cellcolor{gray!6}{0.821} & \cellcolor{gray!6}{0.532} & \cellcolor{gray!6}{0.715} & \cellcolor{gray!6}{0.755} & \cellcolor{gray!6}{0.610}\\
+\hspace{1em}Random Forest & 0.817 & 0.613 & 0.591 & 0.791 & 0.602\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

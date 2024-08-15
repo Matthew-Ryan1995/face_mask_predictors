@@ -6,10 +6,10 @@ Created on Thu Apr 18 11:49:45 2024
 Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
-    - subsample
     - learning rate
+    - subsample
+    - max_depth
     - colsample_by_tree
-    - min_child_weight
 
 ### 230 seems best estimators.  Fix at 250
 
@@ -29,8 +29,8 @@ import numpy as np
 def objective(trial):
     # Define parameter ranges
     learning_rate = trial.suggest_float("learning_rate", 0.01, 1)
-    # max_depth = trial.suggest_int("max_depth", 2, 10)
-    min_child_weight = trial.suggest_int("min_child_weight", 1, 10)
+    max_depth = trial.suggest_int("max_depth", 2, 10)
+    # min_child_weight = trial.suggest_int("min_child_weight", 1, 10)
     subsample = trial.suggest_float("subsample", 0.1, 1)
 
     colsample_bytree = trial.suggest_float("colsample_bytree", 0.5, 0.9)
@@ -46,7 +46,9 @@ def objective(trial):
         subsample=subsample,
         colsample_bytree=colsample_bytree,
         scale_pos_weight=scale_pos_weight,
-        min_child_weight=min_child_weight,
+        max_depth=max_depth,
+        # gamma=gamma,
+        # min_child_weight=min_child_weight,
         # reg_lambda=reg_lambda,
         n_estimators=250,
         objective="binary:logistic",

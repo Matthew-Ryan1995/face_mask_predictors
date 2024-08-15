@@ -1,1 +1,1 @@
-{"number": 390, "value": 0.894741616359995, "params": {"max_depth": 16, "min_samples_split": 6, "min_weight_fraction_leaf": 0.0019495161314644143, "criterion": "gini", "min_impurity_decrease": 4.999696359966883e-05}, "user_attrs": {"std_err": 0.0013964558359526712}}
+{"number": 801, "value": 0.8921316157302746, "params": {"max_depth": 18, "min_samples_split": 13, "min_weight_fraction_leaf": 0.000983685498112139, "min_impurity_decrease": 0.0001106117103902651}, "user_attrs": {"std_err": 0.000783967819793392}}

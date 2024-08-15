@@ -1,0 +1,108 @@
+---
+title: "Untitled"
+author: "Matt Ryan"
+date: "2024-08-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse)
+```
+
+```{r}
+df_mandates <- read_csv("raw_data/OxCGRT_AUS_latest.csv",
+                        col_types = cols())
+```
+
+```{r}
+df_mandates %>% skimr::skim()
+```
+
+```{r}
+df <- df_mandates %>% 
+  select(RegionName, RegionCode, Date, contains("H6")) %>% 
+  mutate(Date = lubridate::ymd(Date),
+         mandates = ifelse(`H6M_Facial Coverings` >=2, "Yes", "No"))
+```
+
+```{r}
+df %>% 
+  mutate(Date = lubridate::ymd(Date)) %>% 
+  ggplot(aes(Date, `H6M_Facial Coverings`)) +
+  geom_point() +
+  facet_wrap(~RegionCode)
+```
+
+```{r}
+df %>% 
+  mutate(
+    Date = lubridate::ymd(Date),
+    mandates = ifelse(`H6M_Facial Coverings` >=2, "Yes", "No")
+  ) %>% 
+  ggplot(aes(x=Date, y=mandates)) +
+  geom_point() +
+  facet_wrap(~RegionCode)
+```
+
+```{r}
+df %>% 
+  group_by(RegionCode) %>% 
+  mutate(avg_mandate = zoo::rollmean(`H6M_Facial Coverings`, 14, 
+                                     na.pad = T, align = "center"),
+          mandates = ifelse(avg_mandate >=2, "Yes", "No"))%>% 
+  ggplot(aes(x=Date, y=mandates)) +
+  geom_point() +
+  facet_wrap(~RegionCode)
+```
+
+```{r}
+df %>% 
+  group_by(RegionCode) %>% 
+  mutate(avg_mandate = zoo::rollmean(`H6M_Facial Coverings`, 14, 
+                                     na.pad = T, align = "right"),
+          mandates = ifelse(avg_mandate >=2, "Yes", "No")) %>% 
+  filter(mandates=="Yes") %>% 
+  slice(1)
+```
+
+
+```{r}
+df %>% 
+  group_by(RegionCode) %>% 
+  mutate(avg_mandate = zoo::rollmean(`H6M_Facial Coverings`, 14, na.pad = T)) %>% 
+  filter(RegionCode=="AUS_QLD")
+```
+
+
+
+```{r}
+df %>% 
+  filter(RegionCode=="AUS_VIC", `H6M_Facial Coverings`>1)
+```
+
+
+
+```{r}
+df_lockdowns <- df_mandates %>% 
+  select(RegionName, RegionCode, Date, contains("C6")) %>% 
+  mutate(Date = lubridate::ymd(Date),
+         mandates = ifelse(`C6M_Stay at home requirements` >=2, "Yes", "No"))
+```
+
+```{r}
+df_lockdowns %>% 
+    ggplot(aes(x=Date, y=mandates)) +
+  geom_point() +
+  facet_wrap(~RegionCode)
+```
+
+```{r}
+df_lockdowns %>% 
+  filter(RegionCode=="AUS_VIC", mandates=="Yes")
+```
+
+
+
+
+

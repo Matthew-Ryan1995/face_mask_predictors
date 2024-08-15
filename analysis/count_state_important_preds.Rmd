@@ -1,0 +1,96 @@
+---
+title: "Untitled"
+author: "Matt Ryan"
+date: "2024-08-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse)
+```
+
+```{r}
+res <- list()
+idx <- 1
+for(model_number in c("model_1", "model_2")){
+  for(model_type in c("rf", "xgboost")){
+    
+    df1 <- read_csv(here::here(glue::glue("results/{model_number}a_{model_type}_feature_importance.csv")),
+                    col_types = cols())
+    df2 <- read_csv(here::here(glue::glue("results/{model_number}b_{model_type}_feature_importance.csv")),
+                    col_types = cols())
+    
+    df_pre_long <- df1 %>% 
+      pivot_longer(-1) %>% 
+      group_by(name) %>% 
+      summarise(mean_importance = median(value),
+                std = sd(value)/sqrt(n()),
+                q1 = quantile(value, 0.25),
+                q2 = quantile(value, 0.75),
+      ) %>% 
+      mutate(time="pre-mandate")
+    df_post_long <- df2 %>% 
+      pivot_longer(-1) %>% 
+      group_by(name) %>% 
+      summarise(mean_importance = median(value),
+                std = sd(value)/sqrt(n()),
+                q1 = quantile(value, 0.25),
+                q2 = quantile(value, 0.75),) %>% 
+      mutate(time="mandate")
+    
+    df <- df_pre_long %>% 
+      arrange(-mean_importance) %>% 
+      bind_rows(df_post_long %>% arrange(-mean_importance)) %>% 
+      # filter(!str_detect(name, "state")) %>% 
+      group_by(time) %>% 
+      slice(1:10) %>% 
+      ungroup() %>% 
+      mutate(name=fct_reorder(name, mean_importance)) %>% 
+      mutate(time = ifelse(time=="mandate", "During mandates", "Before mandates"))
+    
+    df$mean_importance[df$time=="Before mandates"] <- -df$mean_importance[df$time=="Before mandates"]
+    df$q1[df$time=="Before mandates"] <- -df$q1[df$time=="Before mandates"]
+    df$q2[df$time=="Before mandates"] <- -df$q2[df$time=="Before mandates"]
+    
+    grouping_list <- c(
+      "Self protective behaviours",
+      "Demographics",
+      "Health, mental health and wellbeing",
+      "Perception of illness threat",
+      "Time",
+      "Trust in government"
+    )
+    
+    df <- df %>% 
+      mutate(group_var = case_when(
+        str_detect(name, "i2|i9|i11|protective") ~ grouping_list[1],
+        str_detect(name, "age|house|employ|gender|state") ~ grouping_list[2],
+        str_detect(name, "PHQ|cantril|d1") ~ grouping_list[3],
+        str_detect(name, "r1") ~ grouping_list[4],
+        str_detect(name, "week") ~ grouping_list[5],
+        str_detect(name, "WCR") ~ grouping_list[6],
+      ),
+      model_type=model_type,
+      model_number=model_number)
+    
+    res[[idx]] <- df
+    idx <- idx + 1
+  }
+}
+
+
+```
+
+```{r}
+df <- do.call(bind_rows, res)
+```
+
+```{r}
+df %>% 
+  group_by(model_type, model_number, time) %>% 
+  summarise(state_num = sum(str_detect(name, "state")))
+```
+
+
+

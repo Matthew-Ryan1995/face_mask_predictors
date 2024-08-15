@@ -1,0 +1,99 @@
+---
+title: "CV Result tables"
+author: "Matt Ryan"
+date: "2024-04-29"
+output: 
+  pdf_document:
+    keep_tex: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+pacman::p_load(tidyverse, kableExtra)
+```
+
+```{r}
+get_model_results <- function(model_number){
+  df <- read_csv(here::here(glue::glue("results/{model_number}_final_results.csv")),
+                 col_types = cols(), col_select = -1)
+  
+  round_to <- 3
+  models <- c("Logistic Regression",
+              "Classification Tree",
+              "XGBoost",
+              "Random Forest")
+  df <- df %>% 
+    mutate(precision = str_c(round(precision, round_to),
+                             " (",
+                             round(precision_std, round_to),
+                             ")"),
+           recall = str_c(round(recall, round_to),
+                          " (",
+                          round(recall_std, round_to),
+                          ")"),
+           roc_auc = str_c(round(roc_auc, round_to),
+                           " (",
+                           round(roc_auc_std, round_to),
+                           ")"),
+           accuracy = str_c(round(accuracy, round_to),
+                            " (",
+                            round(accuracy_std, round_to),
+                            ")"),
+           f1 = str_c(round(f1, round_to),
+                      " (",
+                      round(f1_std, round_to),
+                      ")")) %>% 
+    select(-contains("std")) %>% 
+    mutate(model_type = case_when(str_detect(model_type, "reg") ~ models[1],
+                                  str_detect(model_type, "tree") ~ models[2],
+                                  str_detect(model_type, "boost") ~ models[3],
+                                  str_detect(model_type, "rf") ~ models[4])) %>% 
+    rename(` ` = model_type,
+           Precision = precision,
+           Recall = recall,
+           `ROC AUC` = roc_auc,
+           Accuracy = accuracy,
+           F1 = f1)
+  
+  return(df)
+}
+
+```
+
+```{r, message=FALSE}
+model_list <- c("01_model_1",
+                "02_model_2",
+                "03_model_1a",
+                "04_model_2a",
+                "05_model_1b",
+                "06_model_2b")
+res <- map_dfr(model_list, get_model_results)
+```
+
+```{r}
+res <- res %>% 
+  mutate(target=ifelse(str_detect(model_number, "_1"), "face_mask", "other"),
+         model_number = case_when(str_detect(model_number, "a") ~ "Pre-mandate",
+                                  str_detect(model_number, "b") ~ "Mandate",
+                                  TRUE ~ NA),
+         model_number = str_c(model_number, target, sep="-")) %>% 
+  arrange((model_number)) %>% 
+  drop_na()
+```
+
+
+```{r}
+res %>% 
+  select(-model_number, -target) %>%
+  select(` `, `ROC AUC`, everything()) %>% 
+  kable(booktabs=T, 
+        caption="Five-fold cross validation results for each model and modelling scenario.  Values are given as mean (standard error).",
+        align="lrrrrr") %>% 
+  pack_rows(index=table(res$model_number)) %>% 
+  kable_styling(latex_options = c("striped", "hold_position", "scale_up"))
+```
+
+
+
+
+

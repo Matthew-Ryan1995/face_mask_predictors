@@ -5,8 +5,11 @@ Note to self:
     Sensitivity = Recall, how many positives correctly predicted
     Precision: How many protected positives are correct
     
-ToDo: Up-sampling on unbalanced data
-    
+ToDo: Up-sampling on unbalanced data'
+- max_depth
+- min_samples_leaf
+- max_features
+- min_samples_split
 Author:
     Jinjing Ye, Matt Ryan
     
@@ -14,6 +17,7 @@ Date created:
     17/04/2024
 '''
 # %% Packages
+from datetime import datetime
 import json
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -37,6 +41,7 @@ del params["std_err"]
 params["n_estimators"] = 250
 params["max_depth"] = int(params["max_depth"])
 params["min_samples_leaf"] = int(params["min_samples_leaf"])
+params["min_samples_split"] = int(params["min_samples_split"])
 
 
 # %%
@@ -69,7 +74,7 @@ def cross_validate_model(model_number):
 
     # Print the accuracy scores for each fold
 
-    print(model_number)
+    print(f"{model_type}-{model_number}")
     # print("Cross-validation scores:", cv_scores)
 
     print("Mean recall: ", cv_scores["test_recall"].mean().round(3))
@@ -81,7 +86,8 @@ def cross_validate_model(model_number):
     with open(f"../results/{model_number}_{model_type}.pkl", "wb") as f:
         pickle.dump(cv_scores, f)
 
+
 # %%
-
-
+start_time = datetime.now()
 cross_validate_model(model_number)
+print(f"time taken: {datetime.now() - start_time}")

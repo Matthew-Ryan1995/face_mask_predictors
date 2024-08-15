@@ -1,0 +1,54 @@
+---
+title: "Test/train counts"
+author: "Matt Ryan"
+date: "2024-08-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+pacman::p_load(tidyverse)
+```
+
+# mandate split of data
+
+```{r}
+df <- read_csv(here::here("data/cleaned_data_preprocessing.csv"), col_types = cols())
+```
+
+```{r}
+df %>% 
+  count(within_mandate_period)
+```
+
+# No Mandate test/train
+
+```{r}
+dfa <- read_csv(here::here("data/y_train_model_1a.csv"), col_types = cols())
+dfa_test <- read_csv(here::here("data/y_test_model_1a.csv"), col_types = cols())
+```
+
+```{r}
+nrow(dfa)
+```
+
+```{r}
+nrow(dfa_test)
+```
+
+
+# Mandate test/train
+
+```{r}
+dfb <- read_csv(here::here("data/y_train_model_1b.csv"), col_types = cols())
+dfb_test <- read_csv(here::here("data/y_test_model_1b.csv"), col_types = cols())
+```
+
+```{r}
+nrow(dfb)
+```
+
+```{r}
+nrow(dfb_test)
+```
+

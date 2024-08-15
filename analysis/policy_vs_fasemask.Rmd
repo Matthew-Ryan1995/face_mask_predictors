@@ -1,0 +1,113 @@
+---
+title: "Untitled"
+author: "Matt Ryan"
+date: "2024-08-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+X_mandates <- read_csv("data/X_train_model_1b.csv")
+y_mandates <- read_csv("data/y_train_model_1b.csv")
+```
+
+```{r}
+df_mandates <- bind_cols(y_mandates, X_mandates)
+```
+
+```{r}
+df_mandates %>% 
+  pivot_longer(contains("state"), names_to = "state") %>% 
+  filter(value > 0) %>% 
+  group_by(week_number, state) %>% 
+  summarise(p = sum(y_train)/n(), .groups = "drop") %>% 
+  ggplot(aes(x=week_number, y = p, colour=state)) +
+  geom_path()+
+  facet_wrap(~state)
+```
+
+```{r}
+mandate_data <- read_csv("raw_data/OxCGRT_AUS_latest.csv")
+```
+
+```{r}
+mandate_data %>% 
+  select(CountryName:RegionCode, Date, contains("H6")) %>% 
+  mutate(Date = lubridate::ymd(Date)) %>% 
+  ggplot(aes(x=Date, y=`H6M_Facial Coverings`)) +
+  geom_path() +
+  facet_wrap(~RegionCode)
+```
+
+
+
+
+
+```{r}
+full_data <- read_csv("data/cleaned_data_preprocessing.csv")
+```
+
+```{r}
+mask_by_state <- full_data %>% 
+  select(endtime, week_number, face_mask_behaviour_scale, face_mask_behaviour_binary, contains("state")) %>% 
+  pivot_longer(contains("state"), names_to = "state") %>% 
+  filter(value>0) %>% 
+  mutate(state = str_remove(state, "state_")) %>% 
+  rename(date=endtime) %>% 
+  group_by(week_number) %>% 
+  mutate(date = max(date)) %>% 
+  ungroup()
+mandates_by_state <- mandate_data %>% 
+  select(CountryName:RegionCode, Date, contains("H6")) %>% 
+  mutate(date = lubridate::ymd(Date),
+         state=RegionName,
+         policy = `H6M_Facial Coverings`)
+```
+
+```{r}
+tmp <- read_csv("data/mandate_start_dates.csv")
+```
+
+```{r}
+tmp <- tmp %>% 
+  rename(mean_mask = `H6M_Facial Coverings`,
+         date=Date,
+         state=RegionName)
+```
+
+
+
+```{r}
+mask_by_state %>% 
+  group_by(date, state) %>% 
+  summarise(mean_mask = mean(face_mask_behaviour_scale), .groups = "drop") %>% 
+  ggplot(aes(x=date, y = mean_mask, colour=state)) +
+  geom_path() +
+  geom_path(data=mandates_by_state, aes(y=policy+1), colour="black") +
+  geom_point(data=tmp, colour="red", size = 3) +
+  facet_wrap(~state)
+```
+
+```{r}
+mask_by_state %>% 
+  group_by(date, state) %>% 
+  summarise(mask_prop = sum(face_mask_behaviour_binary=="Yes")/n(), .groups = "drop") %>% 
+  ggplot(aes(x=date, y = mask_prop, colour=state)) +
+  geom_path() +
+  geom_path(data=mandates_by_state, aes(y=policy/4), colour="black") +
+  facet_wrap(~state)
+```
+
+```{r}
+mask_by_state %>% 
+  group_by(week_number) %>% 
+  mutate(date = max(date)) %>% 
+  ungroup()
+```
+
+
+
+

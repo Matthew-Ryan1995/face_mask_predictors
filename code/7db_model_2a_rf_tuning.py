@@ -6,10 +6,9 @@ Created on Thu Apr 18 11:49:45 2024
 Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
-    - min_samples_leaf
     - max_depth
+    - min_samples_leaf
     - min_samples_split
-    - max_features
 
 
 ### 230 seems best estimators.  Fix at 250
@@ -37,8 +36,8 @@ def objective(trial):
     #     'criterion', ['gini', 'entropy'])
     min_samples_split = trial.suggest_int("min_samples_split", 2, 300)
     min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 200)
-    max_features = trial.suggest_categorical(
-        'max_features', ['sqrt', 'log2', None])
+    # max_features = trial.suggest_categorical(
+    # 'max_features', ['sqrt', 'log2', None])
 
     # Additional parameters
     # class_weight = trial.suggest_categorical(
@@ -53,7 +52,7 @@ def objective(trial):
         # criterion=criterion_list,
         min_samples_split=min_samples_split,
         min_samples_leaf=min_samples_leaf,
-        max_features=max_features,
+        # max_features=max_features,
         bootstrap=True,  # Set bootstrap to True
         # ccp_alpha=ccp_alpha,
         # min_impurity_decrease=min_impurity_decrease,

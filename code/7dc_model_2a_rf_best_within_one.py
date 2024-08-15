@@ -4,11 +4,9 @@
 Created on Thu Apr 18 14:12:16 2024
 
 Findings: Consistently find that
-    - max_features
-    - min_sample_leafs
     - max_depth
+    - min_samples_leaf
     - min_samples_split
-
 @author: rya200
 """
 
@@ -55,9 +53,9 @@ best_shots = tmp.loc[tmp["value"] > within_one_std_err]
 
 # Order chosen based on hyperparamter importance
 sort_params = [
-    "max_features",
-    "min_samples_leaf",
     "max_depth",
+    "min_samples_leaf",
+    # "max_features",
     "min_samples_split",
 ]
 

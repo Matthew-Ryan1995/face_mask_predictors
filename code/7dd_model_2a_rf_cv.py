@@ -6,7 +6,9 @@ Note to self:
     Precision: How many protected positives are correct
     
 ToDo: Up-sampling on unbalanced data
-    
+        - max_depth
+        - min_samples_leaf
+        - min_samples_split
 Author:
     Jinjing Ye, Matt Ryan
     
@@ -119,7 +121,7 @@ def cross_validate_model(model_number):
 
     # Print the accuracy scores for each fold
 
-    print(model_number)
+    print(f"{model_type}-{model_number}")
     # print("Cross-validation scores:", cv_scores)
 
     print("Mean recall: ", cv_scores["test_recall"].mean().round(3))

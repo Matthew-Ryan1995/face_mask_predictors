@@ -8,7 +8,10 @@ Find important hyperparameters for optimizing roc_auc for model 1.
 Findings: Consistently find that
     - learning rate
     - subsample
-All useful for model fitting.  Tune these.
+    - max_depth
+    - colsample_bytree
+    - min_child_weight
+ting.  Tune these.
 
 @author: rya200
 """
@@ -28,11 +31,11 @@ from sklearn.metrics import roc_auc_score
 def objective(trial):
     # Define parameter ranges
     learning_rate = trial.suggest_float("learning_rate", 0.01, 1)
-    # max_depth = trial.suggest_int("max_depth", 2, 10)
-    # min_child_weight = trial.suggest_int("min_child_weight", 1, 10)
+    max_depth = trial.suggest_int("max_depth", 2, 10)
+    min_child_weight = trial.suggest_int("min_child_weight", 1, 10)
     subsample = trial.suggest_float("subsample", 0.1, 1)
 
-    # colsample_bytree = trial.suggest_float("colsample_bytree", 0.5, 0.9)
+    colsample_bytree = trial.suggest_float("colsample_bytree", 0.5, 0.9)
     # scale_pos_weight = trial.suggest_int("scale_pos_weight", 1, 10)
     scale_pos_weight = sum(1-y)/sum(y)
     # gamma = trial.suggest_float("gamma", 1e-8, 1.0, log=True)
@@ -42,10 +45,10 @@ def objective(trial):
 
     clf = xgb.XGBClassifier(
         learning_rate=learning_rate,
-        # max_depth=max_depth,
-        # min_child_weight=min_child_weight,
+        max_depth=max_depth,
+        min_child_weight=min_child_weight,
         subsample=subsample,
-        # colsample_bytree=colsample_bytree,
+        colsample_bytree=colsample_bytree,
         scale_pos_weight=scale_pos_weight,
         # gamma=gamma,
         # alpha=alpha,

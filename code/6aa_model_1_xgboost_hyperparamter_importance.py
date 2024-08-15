@@ -6,10 +6,10 @@ Created on Thu Apr 18 11:49:45 2024
 Find important hyperparameters for optimizing roc_auc for model 1.
 
 Findings: Consistently find that
-    - subsample
     - learning rate
+    - subsample
+    - max_depth
     - colsample_by_tree
-    - min_child_weight
 
 ### 230 seems best estimators.  Fix at 250
 

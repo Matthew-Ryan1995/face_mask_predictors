@@ -8,6 +8,7 @@ Find important hyperparameters for optimizing roc_auc for model 2.
 Findings: Consistently find that
     - learning rate
     - subsample
+    - gamma
 All useful for model fitting.  Tune these.
 
 TODO: Upsampling

@@ -8,6 +8,10 @@ Find important hyperparameters for optimizing roc_auc for model 2.
 Findings: Consistently find that
     - learning rate
     - subsample
+    - max_depth
+    - colsample_bytree
+    - min_child_weight
+
 All useful for model fitting.  Tune these.
 
 TODO: Upsampling

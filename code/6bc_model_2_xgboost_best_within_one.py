@@ -4,7 +4,6 @@
 Created on Thu Apr 18 14:12:16 2024
 
 Findings: Consistently find that
-    - Max depth
     - Learning rate
     - Subsample
 

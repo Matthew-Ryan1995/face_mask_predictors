@@ -6,6 +6,10 @@ Note to self:
     Precision: How many protected positives are correct
     
 ToDo: Up-sampling on unbalanced data
+    - min_imputiry_decrease
+    - min_samples_leaf
+    - min_weight_fraction_leaf
+
     
 Author:
     Jinjing Ye, Matt Ryan
@@ -33,6 +37,9 @@ f.close()
 del params["number"]
 del params["value"]
 del params["std_err"]
+
+params["min_samples_leaf"] = int(params["min_samples_leaf"])
+# params["min_samples_split"] = int(params["min_samples_split"])
 
 
 # %%
@@ -65,7 +72,7 @@ def cross_validate_model(model_number):
 
     # Print the accuracy scores for each fold
 
-    print(model_number)
+    print(f"{model_type}-{model_number}")
     # print("Cross-validation scores:", cv_scores)
 
     print("Mean recall: ", cv_scores["test_recall"].mean().round(3))

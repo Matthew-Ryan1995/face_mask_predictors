@@ -8,8 +8,10 @@ Find important hyperparameters for optimizing roc_auc for model 1.
 Findings: Consistently find that
 - Optimal values at ccp_alpha=min_impurity=0
 - max_depth
-- max_features
 - min_samples_leaf
+- max_features
+- min_samples_split
+
 
 ### 230 seems best estimators.  Fix at 250
 
