@@ -1,185 +1,123 @@
 ---
-title: "Untitled"
+title: "Post Hoc tables"
 author: "Matt Ryan"
-date: "2024-08-15"
-output: html_document
+date: "2024-08-06"
+output: 
+  pdf_document:
+    keep_tex: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-pacman::p_load(tidyverse)
+knitr::opts_chunk$set(echo = FALSE)
+pacman::p_load(tidyverse, gt)
 ```
 
-
-```{r, message=FALSE}
-model_types <- c("rf", "xgboost")
-model_numbers <- c("model_1", "model_2")
-features_list <- list()
-cc <- 1
-for(model_number in model_numbers){
-  for(model_type in model_types){
-    # if(model_number=="model_1"){
-    #   target="face masks"
-    # }else{
-    #   target="general behaviour"
-    # }
-    
-    features_list[[cc]] <- read_csv(here::here(glue::glue("results/{model_number}a_{model_type}_feature_importance.csv")),
-                                    col_types = cols(), col_select = -1) %>% 
-      mutate(model = model_type,
-             target = model_number,
-             period = "pre-mandate")
-    cc <- cc+1
-    features_list[[cc]] <- read_csv(here::here(glue::glue("results/{model_number}b_{model_type}_feature_importance.csv")),
-                                    col_types = cols(), col_select = -1) %>% 
-      mutate(model = model_type,
-             target = model_number,
-             period = "during mandate")
-    cc <- cc+1
+```{r}
+get_table <- function(filename){
+  tab <- read_csv(filename,
+                  col_type = cols(),
+                  id="filename")
+  
+  tab <- tab %>% 
+    mutate(variable = str_extract(filename, "[^_]+_[^_]+$"),
+           variable = str_remove(variable, ".csv"),
+           variable = str_remove(variable, "common|pre|during"),
+           variable = str_remove(variable, "^_"),
+           target_type = str_extract(filename, "(gen)|(masks)"),
+           target_type=ifelse(target_type=="gen", "General health behaviours", "Face masks"),
+           Mandates = str_c("Mandate period: ", Mandates)) %>% 
+    select(-filename) %>% 
+    select(variable, target_type, everything())
+  
+  target_var <- tab$variable %>% unique()
+  
+  # return(target_var)
+  
+  label <- c("i2_health" = "Non-household contacts", 
+             "i9_health" = "Willingness to isolate if unwell", 
+             "i11_health" = "Willingness to isolate if instructed", 
+             "age" = "Age", 
+             "gender" = "Gender",
+             "household_size" = "Household size", 
+             "WCRex2" = "Confidence in government response to COVID-19", 
+             "WCRex1" = "Opinion of govenement handling of COVID-19",
+             "employment_status" = "Employment status", 
+             "PHQ4_1" = "Little interest or pleasure in doing things", 
+             "PHQ4_2" = "Feeling down, depressed, or hopeless", 
+             "PHQ4_3" = "Feeling nervous, anxious, or on edge", 
+             "PHQ4_4" = "Not being able to stop or control worrying", 
+             "r1_1" = "Perceived severity (out of seven)", 
+             "r1_2" = "Perceived susceptibility (out of seven)", 
+             "cantril_ladder" = "Satisfaction with life",
+             "face_mask_behaviour_binary" = "Mask usage",
+             "protective_behaviour_binary" = "Compliance with protective behaviours",
+             "d1_comorbidities" = "Comorbidity",
+             "state" = "State",
+             "protective_behaviour_nomask_scale" = "Other protective health behaviours (out of five)")
+  
+  if(target_var %in% c("gender", "employment_status")){
+    target_var <- label[target_var]
+  }else{
+   target_var <- str_c(label[target_var]," (", target_var, ")") 
   }
+  
+  target_outcome_label <- tab$target_type %>% unique()
+  mandate_rows <- which(tab$Mandates=="Yes")
+  if(any(length(mandate_rows)==0)){
+    non_mandate_rows <- 1:2
+  }
+  non_mandate_rows <- which(tab$Mandates=="No")
+  if(any(length(mandate_rows)==0)){
+    mandate_rows <- 1:2
+  }
+  tab <- tab %>% 
+    select(-variable, -target_type)
+  
+  col_labels <- colnames(tab)
+  col_labels[1] <- target_outcome_label
+  colnames(tab) <- col_labels
+  
+  sc_table <- tab %>% 
+  group_by(Mandates) %>% 
+  gt() %>% 
+  tab_header(title = glue::glue("{target_var} counts by {target_outcome_label}."))
+
+sc_table <- sc_table %>% 
+  cols_align(align = "left", columns = 1) %>% 
+  opt_stylize(style = 6, color = 'gray') %>% 
+  tab_options(
+    data_row.padding = px(2),
+    data_row.padding.horizontal = px(2),
+    heading.align = 'left',
+    heading.title.font.size = px(16)
+  ) 
+
+  return(sc_table)
 }
-feature_df <- do.call(bind_rows, features_list)
 ```
 
 ```{r}
-feature_summaries<-feature_df %>% 
-  pivot_longer(-c(model, target, period)) %>%  
-  drop_na() %>%  #protective no mask not measured in general behaviour model
-  group_by(model, target, period, name) %>% 
-  summarise(mean_importance = median(value),
-            std = sd(value)/sqrt(n()),
-            q1 = quantile(value, 0.25),
-            q2 = quantile(value, 0.75),
-            .groups = "drop") 
+file_list <- list.files("../results/post_hoc/categorical", full.names = TRUE)
 ```
 
 ```{r}
-key_features <- feature_summaries %>% 
-  group_by(model, target, period) %>% 
-  arrange(-mean_importance) %>% 
-  filter(!str_detect(name, "state")) %>% 
-  slice(1:10) %>% 
-  ungroup() %>% 
-  mutate(name = ifelse(str_detect(name, "PHQ4_1"), "PHQ4_1", name),
-         name = ifelse(str_detect(name, "PHQ4_2"), "PHQ4_2", name),
-         name = ifelse(str_detect(name, "PHQ4_3"), "PHQ4_3", name),
-         name = ifelse(str_detect(name, "PHQ4_4"), "PHQ4_4", name),
-         name = ifelse(str_detect(name, "WCRex1"), "WCRex1", name),
-         name = ifelse(str_detect(name, "WCRex2"), "WCRex2", name),
-         name = ifelse(str_detect(name, "employment_status"), "employment_status", name),
-         name = ifelse(str_detect(name, "gender"), "gender", name),
-         name = ifelse(str_detect(name, "i9_health"), "i9_health", name),
-         name = ifelse(str_detect(name, "i11_health"), "i11_health", name),
-  ) %>% 
-  distinct(target, period, name, .keep_all = TRUE) 
+tab_list <- map(file_list, get_table)
+tab_list[[1]]
+tab_list[[2]]
+tab_list[[3]]
+tab_list[[4]]
+tab_list[[5]]
+tab_list[[6]]
+tab_list[[7]]
+tab_list[[8]]
+tab_list[[9]]
+tab_list[[10]]
+tab_list[[11]]
+tab_list[[12]]
+tab_list[[13]]
+tab_list[[14]]
+tab_list[[15]]
 ```
-
-```{r}
-key_features_pre_mask <- key_features %>% 
-  filter(period=="pre-mandate", target=="model_1") %>% 
-  pull(name)
-key_features_during_mask <- key_features %>% 
-  filter(period!="pre-mandate", target=="model_1")%>% 
-  pull(name)
-key_features_pre_gen <- key_features %>% 
-  filter(period=="pre-mandate", target!="model_1") %>% 
-  pull(name)
-key_features_during_gen <- key_features %>% 
-  filter(period!="pre-mandate", target!="model_1")%>% 
-  pull(name)
-```
-
-```{r}
-common_features_mask <- intersect(key_features_pre_mask, key_features_during_mask)
-
-distinct_pre_mask <- key_features_pre_mask[!str_detect(key_features_pre_mask, 
-                                                  str_c(common_features_mask, collapse = "|"))]
-distinct_during_mask <- key_features_during_mask[!str_detect(key_features_during_mask, 
-                                                             str_c(common_features_mask, collapse = "|"))]
-
-common_features_gen <- intersect(key_features_pre_gen, key_features_during_gen)
-
-distinct_pre_gen <- key_features_pre_gen[!str_detect(key_features_pre_gen, 
-                                                 str_c(common_features_gen, collapse = "|"))]
-distinct_during_gen <- key_features_during_gen[!str_detect(key_features_during_gen, 
-                                                           str_c(common_features_gen, collapse = "|"))]
-```
-
-
-```{r}
-clean_data <- read_csv(here::here("data/cleaned_data.csv"),
-                       col_types = cols())
-clean_data_w_mandate <- read_csv(here::here("data/cleaned_data_preprocessing.csv"),
-                                 col_types = cols()) %>% 
-  select(RecordNo, within_mandate_period)
-full_data <-left_join(clean_data, clean_data_w_mandate, by="RecordNo") %>% 
-  mutate(within_mandate_period = ifelse(within_mandate_period==0, "No", "Yes"))
-```
-
-```{r}
-df_pre_mandate_mask<-full_data %>% 
-  select(face_mask_behaviour_binary,
-         within_mandate_period,
-         all_of(distinct_pre_mask)) %>% 
-  filter(within_mandate_period=="No")
-
-df_pre_mandate_gen<-full_data %>% 
-  select(protective_behaviour_binary,
-         within_mandate_period,
-         all_of(distinct_pre_gen)) %>% 
-  filter(within_mandate_period=="No")
-
-df_during_mandate_mask<-full_data %>% 
-  select(face_mask_behaviour_binary,
-         within_mandate_period,
-         all_of(distinct_during_mask))%>% 
-  filter(within_mandate_period=="Yes")
-
-df_during_mandate_gen<-full_data %>% 
-  select(protective_behaviour_binary,
-         within_mandate_period,
-         all_of(distinct_during_gen))%>% 
-  filter(within_mandate_period=="Yes")
-
-df_common_mask <- full_data %>% 
-  select(face_mask_behaviour_binary,
-         within_mandate_period,
-         all_of(common_features_mask))
-df_common_gen <- full_data %>% 
-  select(protective_behaviour_binary,
-         within_mandate_period,
-         all_of(common_features_gen))
-```
-
-```{r}
-df_common_mask %>% 
-  ggplot(aes(y=face_mask_behaviour_binary, x=i2_health,
-             fill=face_mask_behaviour_binary)) +
-  geom_violin() +
-  facet_wrap(~within_mandate_period, labeller = label_both) +
-  labs(y="Face mask usage", fill="Face mask usage",) +
-  theme_bw() +
-  theme(legend.position = "bottom")
-```
-```{r}
-tmp <- full_data %>% 
-  select(protective_behaviour_binary,
-         within_mandate_period,
-         var=all_of(common_features_gen[8]))
-```
-
-```{r}
-is.character(tmp$var)
-```
-
-```{r}
-tmp %>% 
-  count(protective_behaviour_binary, within_mandate_period, var) %>% 
-  pivot_wider(names_from=var, values_from = n) %>% 
-  arrange(within_mandate_period)
-```
-
-
 
 
 

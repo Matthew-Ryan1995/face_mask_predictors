@@ -172,6 +172,10 @@ for(list_lab in names(feature_loop_list)){
     if(isTRUE(any(is.character(tmp$var), is.factor(tmp$var)))){
       tab <- tmp %>% 
         count(target, Mandates, var) %>% 
+        group_by(target, Mandates) %>% 
+        mutate(p = round(n/sum(n), 4) * 100,
+               n = str_c(n, " (", p, "%)")) %>% 
+        select(-p) %>% 
         pivot_wider(names_from=var, values_from = n) %>% 
         arrange(Mandates)
       write_csv(tab,
