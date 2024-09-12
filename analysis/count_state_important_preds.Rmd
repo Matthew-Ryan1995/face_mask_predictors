@@ -92,5 +92,13 @@ df %>%
   summarise(state_num = sum(str_detect(name, "state")))
 ```
 
+```{r}
+df %>% 
+  group_by(model_type, model_number, time) %>% 
+  filter(str_detect(name, "state")) %>% 
+  ungroup() %>% 
+  count(name)
+```
+
 
 

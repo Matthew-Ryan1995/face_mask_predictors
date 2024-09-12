@@ -53,7 +53,8 @@ load_data <- function(model_type, model_number, ...){
     slice(1:10) %>% 
     ungroup() %>% 
     mutate(name=fct_reorder(name, mean_importance)) %>% 
-    mutate(time = ifelse(time=="mandate", "During mandates", "Before mandates"))
+    mutate(time = ifelse(time=="mandate", "After mandates", "Before mandates"),
+           time = factor(time, c("Before mandates", "After mandates")))
   
   df$mean_importance[df$time=="Before mandates"] <- -df$mean_importance[df$time=="Before mandates"]
   df$q1[df$time=="Before mandates"] <- -df$q1[df$time=="Before mandates"]
@@ -224,7 +225,7 @@ create_tornado_plot <- function(model_type, model_number){
     scale_fill_manual(values = colour_palette) +
     guides(fill = guide_legend(nrow = 2)) +
     # ggtitle(glue::glue("{model_type} - {model_number}")) +
-    labs(y = NULL, x = "Mean feature importance", fill = NULL) +
+    labs(y = NULL, x = "Median feature importance", fill = NULL) +
     theme_bw() +
     theme(panel.spacing.x = unit(0, "mm"),
           legend.position = "none",
@@ -258,7 +259,7 @@ model_type <- "rf"
 p_rf <- create_tornado_plot(model_number = model_number, model_type = model_type) 
 
 p <- (p_rf/p_xgb) +  
-  plot_annotation(tag_levels = 'a', tag_suffix = ")") 
+  plot_annotation(tag_levels = 'a', tag_suffix = ")", tag_prefix="(") 
 
 
 ggsave(here::here(glue::glue("figures/mean_feature_importance_{model_number}_both_models.png")),
@@ -283,7 +284,7 @@ model_type <- "rf"
 p_rf <- create_tornado_plot(model_number = model_number, model_type = model_type) 
 
 p <- (p_rf/p_xgb) +  
-  plot_annotation(tag_levels = 'a', tag_suffix = ")") 
+  plot_annotation(tag_levels = 'a', tag_suffix = ")", tag_prefix="(") 
 
 ggsave(here::here(glue::glue("figures/mean_feature_importance_{model_number}_both_models.png")),
        plot = p,
