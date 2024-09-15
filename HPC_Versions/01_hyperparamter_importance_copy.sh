@@ -5,12 +5,12 @@
 #SBATCH --time=02:00:00    	                                # walltime allocation, which has the format (D-HH:MM:SS), here set to 1 hour
 #SBATCH --mem=10GB         	                                # memory required per node (here set to 4 GB)
 #SBATCH --output=slurm_outputs/hyperparameter_importance/slurm-%A_%a.out
-#SBATCH --account=OD-223323
+
 
 # Notification configuration
 #SBATCH --array=1-18
 #SBATCH --mail-type=END					    	# Send a notification email when the job is done (=END)
-#SBATCH --mail-user=rya200@csiro.au  	# Email to which notifications will be sent
+
 
 #loading modules
 module load python/3.12.3 
