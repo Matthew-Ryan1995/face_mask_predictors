@@ -69,7 +69,7 @@ p <- df_mandates %>%
   scale_colour_discrete(breaks = c("Pre-mandates", "After mandates")) +
   theme_bw() +
   theme(legend.position = "bottom",
-        text = element_text(size = text_size))
+        text = element_text(size = text_size, family="Times New Roman"))
 
 ggsave(here::here(glue::glue("figures/mandate_periods_time.png")),
        plot = p,

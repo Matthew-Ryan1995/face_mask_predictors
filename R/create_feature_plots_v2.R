@@ -229,7 +229,7 @@ create_tornado_plot <- function(model_type, model_number){
     theme_bw() +
     theme(panel.spacing.x = unit(0, "mm"),
           legend.position = "none",
-          text = element_text(size = text_size),
+          text = element_text(size = text_size, family="Times New Roman"),
           axis.text.y = element_text(size=10),
           strip.text = element_text(size=22),
           legend.text = element_text(size=14),

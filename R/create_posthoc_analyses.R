@@ -211,7 +211,8 @@ for(list_lab in names(feature_loop_list)){
              fill=y_label, 
              x = label_val) +
         theme_bw() +
-        theme(legend.position = "bottom")
+        theme(legend.position = "bottom",
+              text=element_text(family="Times New Roman"))
       
       
       ggsave(here::here(glue::glue("results/post_hoc/continuous/{list_lab}_{v}.png")),

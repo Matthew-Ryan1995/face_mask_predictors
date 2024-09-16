@@ -76,7 +76,7 @@ p <- full_mask_signal %>%
   labs(y="Proportion wearing face masks",
        x="Survey fortnight") +
   theme_bw() +
-  theme(text = element_text(size=text_size))
+  theme(text = element_text(size=text_size, family="Times New Roman"))
 
 
 ggsave(here::here(glue::glue("figures/mask_signals.png")),
