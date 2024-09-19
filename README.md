@@ -1,4 +1,4 @@
-This repository contains the code for the paper **TITLE**.  The purpose of this project is to build predictive models to identify key features that predict face mask usage and other, general health behaviours in Australia during the COVID-19 pandemic.  Particularly, we investigate the common and distinct predictive features that predict face masks and general health behaviours before mandates came into place and after.
+This repository contains the code for the paper **Face mask mandates alter major determinants of adherence to protective health behaviours in Australia**.  The purpose of this project is to build predictive models to identify key features that predict face mask usage and other, general health behaviours in Australia during the COVID-19 pandemic.  Particularly, we investigate the common and distinct predictive features that predict face masks and general health behaviours before mandates came into place and after.
 
 The repository folders are as follows:
 
